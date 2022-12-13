@@ -36,7 +36,7 @@ const copyFn: TAsyncMapLineFn = async (
   return Promise.resolve(line);
 };
 
-const copyProcessor = mapLineMachine(copyFn, true);
+const copyProcessor = mapLineMachine(copyFn);
 
 // -----------------------------------------------------------------------
 

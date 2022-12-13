@@ -3,19 +3,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapLineMachine = void 0;
+exports.mapLineMachine = exports.DEFAULT_LTM_OPTIONS = void 0;
 const readline_transform_1 = __importDefault(require("readline-transform"));
 const events_1 = require("events");
 const filestreamwrapper_1 = require("./utils/filestreamwrapper");
-const mapLineMachine = (asyncMapFn, includeLineEnds = false) => {
+exports.DEFAULT_LTM_OPTIONS = {
+    rememberEndOfLines: true,
+    useAsyncFn: false,
+};
+const mapLineMachine = (asyncMapFn, options) => {
     const proc = async (input, output) => {
+        const finalOptions = {
+            ...exports.DEFAULT_LTM_OPTIONS,
+            ...options,
+        };
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
         let linesRead = 0;
         for await (const line of r) {
             linesRead++;
             let lineResult = await asyncMapFn(line, linesRead);
-            if (lineResult !== null && includeLineEnds && linesRead > 1) {
+            if (lineResult !== null &&
+                finalOptions.rememberEndOfLines === true &&
+                linesRead > 1) {
                 lineResult = '\n' + lineResult;
             }
             if (lineResult !== null && lineResult !== '') {

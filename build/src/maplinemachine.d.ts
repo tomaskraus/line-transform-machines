@@ -4,4 +4,15 @@ export type TInputStats = {
     linesRead: number;
 };
 export type TAsyncMapLineFn = (line: string, lineNumber: number) => Promise<string | null>;
-export declare const mapLineMachine: (asyncMapFn: TAsyncMapLineFn, includeLineEnds?: boolean) => TFileProcessor<TInputStats>;
+/**
+ * Options
+ */
+export type TLineMachineOptions = {
+    /**
+     * remembers...
+     */
+    rememberEndOfLines: boolean;
+    useAsyncFn: boolean;
+};
+export declare const DEFAULT_LTM_OPTIONS: TLineMachineOptions;
+export declare const mapLineMachine: (asyncMapFn: TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TInputStats>;

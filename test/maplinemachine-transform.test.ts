@@ -45,7 +45,7 @@ describe('transform', () => {
   });
 
   test('line numbers', async () => {
-    const lnMachine = mapLineMachine(lineNumberFn, true);
+    const lnMachine = mapLineMachine(lineNumberFn);
 
     const res = await lnMachine(input, output);
 
@@ -56,7 +56,7 @@ describe('transform', () => {
   test('outputs less lines if fn returns null', async () => {
     const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);
 
-    const lnMachine = mapLineMachine(noDollyFn, true);
+    const lnMachine = mapLineMachine(noDollyFn);
 
     const res = await lnMachine(inputWithDolly, output);
 
@@ -68,7 +68,7 @@ describe('transform', () => {
     const nlFn: TAsyncMapLineFn = async (line: string) =>
       Promise.resolve(`-\n${line}`);
 
-    const lnMachine = mapLineMachine(nlFn, true);
+    const lnMachine = mapLineMachine(nlFn);
 
     const res = await lnMachine(input, output);
     expect(res.linesRead).toEqual(2); //line read count remains the same

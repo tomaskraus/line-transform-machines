@@ -54,7 +54,7 @@ const copyFn = async (line
 ) => {
     return Promise.resolve(line);
 };
-const copyProcessor = (0, maplinemachine_1.mapLineMachine)(copyFn, true);
+const copyProcessor = (0, maplinemachine_1.mapLineMachine)(copyFn);
 // -----------------------------------------------------------------------
 describe('input stream', () => {
     let inputFileStream;

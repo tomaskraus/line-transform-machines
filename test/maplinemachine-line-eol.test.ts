@@ -41,7 +41,7 @@ describe('lines & EOLs', () => {
 
   test('empty input file', async () => {
     const inputEmpty = fs.createReadStream(`${PATH_PREFIX}/empty.txt`);
-    const lnMachine = mapLineMachine(copyFn, true);
+    const lnMachine = mapLineMachine(copyFn);
 
     const res = await lnMachine(inputEmpty, output);
     expect(res.linesRead).toEqual(0);
@@ -50,7 +50,7 @@ describe('lines & EOLs', () => {
 
   test('one line without EOL means one line', async () => {
     const oneLine = fs.createReadStream(`${PATH_PREFIX}/one-line.txt`);
-    const lnMachine = mapLineMachine(copyFn, true);
+    const lnMachine = mapLineMachine(copyFn);
 
     const res = await lnMachine(oneLine, output);
     expect(res.linesRead).toEqual(1);
@@ -60,7 +60,7 @@ describe('lines & EOLs', () => {
   test('one EOL means two lines', async () => {
     const oneEOL = fs.createReadStream(`${PATH_PREFIX}/one-eol.txt`);
 
-    const lnMachine = mapLineMachine(copyFn, true);
+    const lnMachine = mapLineMachine(copyFn);
 
     const res = await lnMachine(oneEOL, output);
 
@@ -71,7 +71,7 @@ describe('lines & EOLs', () => {
   test('preserves empty lines', async () => {
     const inputEmptyLines = fs.createReadStream(`${PATH_PREFIX}/two-eols.txt`);
 
-    const lnMachine = mapLineMachine(copyFn, true);
+    const lnMachine = mapLineMachine(copyFn);
 
     const res = await lnMachine(inputEmptyLines, output);
 
@@ -80,7 +80,9 @@ describe('lines & EOLs', () => {
   });
 
   test('exclude EOLs', async () => {
-    const withoutEOLSMachine = mapLineMachine(copyFn, false);
+    const withoutEOLSMachine = mapLineMachine(copyFn, {
+      rememberEndOfLines: false,
+    });
     const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
     const res = await withoutEOLSMachine(input, output);
 
@@ -90,7 +92,7 @@ describe('lines & EOLs', () => {
 
   test('EOL at the end of file', async () => {
     const input = fs.createReadStream(`${PATH_PREFIX}/my-file-eol-end.txt`);
-    const lnMachine = mapLineMachine(copyFn, true);
+    const lnMachine = mapLineMachine(copyFn);
 
     const res = await lnMachine(input, output);
 
