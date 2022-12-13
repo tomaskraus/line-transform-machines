@@ -27,14 +27,14 @@ describe('transform', () => {
     line: string,
     lineNumber: number
   ): Promise<string> => {
-    return Promise.resolve(`${lineNumber}: ${line}`);
+    return `${lineNumber}: ${line}`;
   };
 
   const noDollyFn: TAsyncMapLineFn = async (line: string) => {
     if (line.trim() === 'Dolly') {
-      return Promise.resolve(null);
+      return null;
     }
-    return Promise.resolve(line);
+    return line;
   };
 
   let input: stream.Readable;
@@ -65,8 +65,7 @@ describe('transform', () => {
   });
 
   test('outputs more lines if fn returns a string with newLine(s)', async () => {
-    const nlFn: TAsyncMapLineFn = async (line: string) =>
-      Promise.resolve(`-\n${line}`);
+    const nlFn: TAsyncMapLineFn = async (line: string) => `-\n${line}`;
 
     const lnMachine = mapLineMachine(nlFn);
 
