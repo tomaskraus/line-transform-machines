@@ -85,12 +85,17 @@ describe('input file', () => {
     test('output as stream', async () => {
         const outMemStream = new mStream.WritableStream();
         const res = await copyProcessor(inputFileName, outMemStream);
+        expect(res.inputFileName).toContain('my-file.txt');
+        expect(res.outputFileName).toBeUndefined();
         expect(res).toHaveProperty('linesRead');
         expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
     });
     test('output as file - ok', async () => {
         const res = await copyProcessor(inputFileName, `${PATH_PREFIX}/out2.txt`);
         expect(res).toHaveProperty('linesRead');
+        expect(res.linesRead).toEqual(2);
+        expect(res.inputFileName).toContain('my-file.txt');
+        expect(res.outputFileName).toContain('out2.txt');
         const buff = fs.readFileSync(`${PATH_PREFIX}/out2.txt`);
         expect(buff.toString()).toEqual('Hello, \nWorld!');
     });

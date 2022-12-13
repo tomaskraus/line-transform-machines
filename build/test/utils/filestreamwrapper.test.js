@@ -30,10 +30,10 @@ const mock_fs_1 = __importDefault(require("mock-fs"));
 const filestreamwrapper_1 = require("../../src/utils/filestreamwrapper");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
-const copyStreamProcessor = (input, output) => {
+const copyStreamProcessor = (input, output, fileStats) => {
     return new Promise((resolve, reject) => {
         input.pipe(output, { end: true });
-        input.on('end', () => resolve('read OK'));
+        input.on('end', () => resolve(fileStats));
         input.on('error', err => reject(err));
     });
 };
@@ -62,12 +62,14 @@ describe('input stream', () => {
     test('output as stream', async () => {
         const outMemStream = new mStream.WritableStream();
         const res = await copyProcessor(inputFileStream, outMemStream);
-        expect(res).toContain('OK');
+        expect(res).toHaveProperty('linesRead');
+        expect(res.outputFileName).toBeUndefined();
         expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
     });
     test('output as file - ok', async () => {
         const res = await copyProcessor(inputFileStream, `${PATH_PREFIX}/out.txt`);
-        expect(res).toContain('OK');
+        expect(res).toHaveProperty('linesRead');
+        expect(res.outputFileName).toContain('out.txt');
         const buff = fs.readFileSync(`${PATH_PREFIX}/out.txt`);
         expect(buff.toString()).toEqual('Hello, \nWorld!');
     });
@@ -83,12 +85,15 @@ describe('input file', () => {
     test('output as stream', async () => {
         const outMemStream = new mStream.WritableStream();
         const res = await copyProcessor(inputFileName, outMemStream);
-        expect(res).toContain('OK');
+        expect(res).toHaveProperty('linesRead');
+        expect(res.inputFileName).toContain('my-file.txt');
         expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
     });
     test('output as file - ok', async () => {
         const res = await copyProcessor(inputFileName, `${PATH_PREFIX}/out2.txt`);
-        expect(res).toContain('OK');
+        expect(res).toHaveProperty('linesRead');
+        expect(res.inputFileName).toContain('my-file.txt');
+        expect(res.outputFileName).toContain('out2.txt');
         const buff = fs.readFileSync(`${PATH_PREFIX}/out2.txt`);
         expect(buff.toString()).toEqual('Hello, \nWorld!');
     });

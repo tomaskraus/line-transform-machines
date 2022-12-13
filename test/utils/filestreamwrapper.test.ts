@@ -1,20 +1,24 @@
 import mock from 'mock-fs';
 
 import {fileStreamWrapper} from '../../src/utils/filestreamwrapper';
-import type {TStreamProcessor} from '../../src/utils/filestreamwrapper';
+import type {
+  TStreamProcessor,
+  TFileStreamStats,
+} from '../../src/utils/filestreamwrapper';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
 
 import * as fs from 'fs';
 
-const copyStreamProcessor: TStreamProcessor<string> = (
+const copyStreamProcessor: TStreamProcessor<TFileStreamStats> = (
   input: stream.Readable,
-  output: stream.Writable
+  output: stream.Writable,
+  fileStats: TFileStreamStats
 ) => {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<TFileStreamStats>((resolve, reject) => {
     input.pipe(output, {end: true});
-    input.on('end', () => resolve('read OK'));
+    input.on('end', () => resolve(fileStats));
     input.on('error', err => reject(err));
   });
 };
@@ -49,14 +53,16 @@ describe('input stream', () => {
     const outMemStream = new mStream.WritableStream();
     const res = await copyProcessor(inputFileStream, outMemStream);
 
-    expect(res).toContain('OK');
+    expect(res).toHaveProperty('linesRead');
+    expect(res.outputFileName).toBeUndefined();
     expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
   });
 
   test('output as file - ok', async () => {
     const res = await copyProcessor(inputFileStream, `${PATH_PREFIX}/out.txt`);
 
-    expect(res).toContain('OK');
+    expect(res).toHaveProperty('linesRead');
+    expect(res.outputFileName).toContain('out.txt');
     const buff = fs.readFileSync(`${PATH_PREFIX}/out.txt`);
     expect(buff.toString()).toEqual('Hello, \nWorld!');
   });
@@ -81,14 +87,19 @@ describe('input file', () => {
     const outMemStream = new mStream.WritableStream();
     const res = await copyProcessor(inputFileName, outMemStream);
 
-    expect(res).toContain('OK');
+    expect(res).toHaveProperty('linesRead');
+    expect(res.inputFileName).toContain('my-file.txt');
+
     expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
   });
 
   test('output as file - ok', async () => {
     const res = await copyProcessor(inputFileName, `${PATH_PREFIX}/out2.txt`);
 
-    expect(res).toContain('OK');
+    expect(res).toHaveProperty('linesRead');
+    expect(res.inputFileName).toContain('my-file.txt');
+    expect(res.outputFileName).toContain('out2.txt');
+
     const buff = fs.readFileSync(`${PATH_PREFIX}/out2.txt`);
     expect(buff.toString()).toEqual('Hello, \nWorld!');
   });

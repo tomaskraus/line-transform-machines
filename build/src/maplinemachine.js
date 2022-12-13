@@ -12,20 +12,20 @@ exports.DEFAULT_LTM_OPTIONS = {
     useAsyncFn: false,
 };
 const mapLineMachine = (asyncMapFn, options) => {
-    const proc = async (input, output) => {
+    const proc = async (input, output, fileStats) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
             ...options,
         };
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
-        let linesRead = 0;
+        fileStats.linesRead = 0;
         for await (const line of r) {
-            linesRead++;
-            let lineResult = await asyncMapFn(line, linesRead);
+            fileStats.linesRead++;
+            let lineResult = await asyncMapFn(line, fileStats.linesRead);
             if (lineResult !== null &&
                 finalOptions.rememberEndOfLines === true &&
-                linesRead > 1) {
+                fileStats.linesRead > 1) {
                 lineResult = '\n' + lineResult;
             }
             if (lineResult !== null && lineResult !== '') {
@@ -38,7 +38,7 @@ const mapLineMachine = (asyncMapFn, options) => {
                 }
             }
         }
-        return Promise.resolve({ linesRead });
+        return Promise.resolve(fileStats);
     };
     return (0, filestreamwrapper_1.fileStreamWrapper)(proc);
 };

@@ -5,9 +5,16 @@
 import stream from 'stream';
 import * as fsp from 'node:fs/promises';
 
+export type TFileStreamStats = {
+  inputFileName?: string;
+  outputFileName?: string;
+  linesRead: number;
+};
+
 export type TStreamProcessor<TResult> = (
   input: stream.Readable,
-  output: stream.Writable
+  output: stream.Writable,
+  fileStats: TFileStreamStats
 ) => Promise<TResult>;
 
 export type TFileProcessor<TResult> = (
@@ -27,10 +34,11 @@ export const fileStreamWrapper = <TResult>(
     return new Promise<TResult>((resolve, reject) => {
       const continueWithInStreamReady = (
         inStream: stream.Readable,
-        outStream: stream.Writable
+        outStream: stream.Writable,
+        fileStats: TFileStreamStats
       ) => {
         inStream.on('error', err => reject(err));
-        proc(inStream, outStream)
+        proc(inStream, outStream, fileStats)
           .then((res: TResult) => {
             // outStream.end();   // closes also stdout
             resolve(res);
@@ -38,27 +46,43 @@ export const fileStreamWrapper = <TResult>(
           .catch(err => reject(err));
       };
 
-      const continueWithOutStreamReady = (outStream: stream.Writable): void => {
+      const continueWithOutStreamReady = (
+        outStream: stream.Writable,
+        fileStats: TFileStreamStats
+      ): void => {
         outStream.on('error', err => reject(err));
         if (typeof inputFileNameOrStream === 'string') {
           fsp
             .open(inputFileNameOrStream)
             .then(fhi =>
-              continueWithInStreamReady(fhi.createReadStream(), outStream)
+              continueWithInStreamReady(fhi.createReadStream(), outStream, {
+                ...fileStats,
+                inputFileName: inputFileNameOrStream,
+              })
             )
             .catch(err => reject(err));
         } else {
-          continueWithInStreamReady(inputFileNameOrStream, outStream);
+          continueWithInStreamReady(
+            inputFileNameOrStream,
+            outStream,
+            fileStats
+          );
         }
       };
 
+      const fileStats: TFileStreamStats = {linesRead: 0};
       if (typeof outputFileNameOrStream === 'string') {
         fsp
           .open(outputFileNameOrStream, 'w')
-          .then(fho => continueWithOutStreamReady(fho.createWriteStream()))
+          .then(fho =>
+            continueWithOutStreamReady(fho.createWriteStream(), {
+              ...fileStats,
+              outputFileName: outputFileNameOrStream,
+            })
+          )
           .catch(err => reject(err));
       } else {
-        continueWithOutStreamReady(outputFileNameOrStream);
+        continueWithOutStreamReady(outputFileNameOrStream, fileStats);
       }
     });
   };

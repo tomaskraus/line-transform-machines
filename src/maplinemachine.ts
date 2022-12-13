@@ -2,12 +2,8 @@ import stream from 'stream';
 import ReadlineTransform from 'readline-transform';
 import {once} from 'events';
 import {fileStreamWrapper} from './utils/filestreamwrapper';
+import type {TFileStreamStats} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
-
-export type TInputStats = {
-  fileName?: string;
-  linesRead: number;
-};
 
 export type TAsyncMapLineFn = (
   line: string,
@@ -33,26 +29,26 @@ export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
 export const mapLineMachine = (
   asyncMapFn: TAsyncMapLineFn,
   options?: Partial<TLineMachineOptions>
-): TFileProcessor<TInputStats> => {
-  const proc: TStreamProcessor<TInputStats> = async (
+): TFileProcessor<TFileStreamStats> => {
+  const proc: TStreamProcessor<TFileStreamStats> = async (
     input: stream.Readable,
-    output: stream.Writable
-  ): Promise<TInputStats> => {
+    output: stream.Writable,
+    fileStats: TFileStreamStats
+  ): Promise<TFileStreamStats> => {
     const finalOptions = {
       ...DEFAULT_LTM_OPTIONS,
       ...options,
     };
-
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
     const r = input.pipe(transformToLines);
-    let linesRead = 0;
+    fileStats.linesRead = 0;
     for await (const line of r) {
-      linesRead++;
-      let lineResult = await asyncMapFn(line, linesRead);
+      fileStats.linesRead++;
+      let lineResult = await asyncMapFn(line, fileStats.linesRead);
       if (
         lineResult !== null &&
         finalOptions.rememberEndOfLines === true &&
-        linesRead > 1
+        fileStats.linesRead > 1
       ) {
         lineResult = '\n' + lineResult;
       }
@@ -66,8 +62,8 @@ export const mapLineMachine = (
         }
       }
     }
-    return Promise.resolve({linesRead});
+    return Promise.resolve(fileStats);
   };
 
-  return fileStreamWrapper<TInputStats>(proc);
+  return fileStreamWrapper<TFileStreamStats>(proc);
 };

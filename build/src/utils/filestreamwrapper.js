@@ -33,35 +33,42 @@ const fileStreamWrapper = (proc) => {
     // options?: TOptions
     ) => {
         return new Promise((resolve, reject) => {
-            const continueWithInStreamReady = (inStream, outStream) => {
+            const continueWithInStreamReady = (inStream, outStream, fileStats) => {
                 inStream.on('error', err => reject(err));
-                proc(inStream, outStream)
+                proc(inStream, outStream, fileStats)
                     .then((res) => {
                     // outStream.end();   // closes also stdout
                     resolve(res);
                 })
                     .catch(err => reject(err));
             };
-            const continueWithOutStreamReady = (outStream) => {
+            const continueWithOutStreamReady = (outStream, fileStats) => {
                 outStream.on('error', err => reject(err));
                 if (typeof inputFileNameOrStream === 'string') {
                     fsp
                         .open(inputFileNameOrStream)
-                        .then(fhi => continueWithInStreamReady(fhi.createReadStream(), outStream))
+                        .then(fhi => continueWithInStreamReady(fhi.createReadStream(), outStream, {
+                        ...fileStats,
+                        inputFileName: inputFileNameOrStream,
+                    }))
                         .catch(err => reject(err));
                 }
                 else {
-                    continueWithInStreamReady(inputFileNameOrStream, outStream);
+                    continueWithInStreamReady(inputFileNameOrStream, outStream, fileStats);
                 }
             };
+            const fileStats = { linesRead: 0 };
             if (typeof outputFileNameOrStream === 'string') {
                 fsp
                     .open(outputFileNameOrStream, 'w')
-                    .then(fho => continueWithOutStreamReady(fho.createWriteStream()))
+                    .then(fho => continueWithOutStreamReady(fho.createWriteStream(), {
+                    ...fileStats,
+                    outputFileName: outputFileNameOrStream,
+                }))
                     .catch(err => reject(err));
             }
             else {
-                continueWithOutStreamReady(outputFileNameOrStream);
+                continueWithOutStreamReady(outputFileNameOrStream, fileStats);
             }
         });
     };
