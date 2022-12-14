@@ -5,8 +5,13 @@ const node_process_1 = require("node:process");
 const toUpper = (s) => s.toUpperCase();
 const lineMachine = (0, maplinemachine_1.createMapLineMachine)(toUpper);
 const runner = async () => {
-    const res = await lineMachine('./examples/input.txt', node_process_1.stdout);
-    console.log(res);
+    try {
+        const stats = await lineMachine('./examples/input.txt', node_process_1.stdout);
+        console.log('\nstats:', stats);
+    }
+    catch (err) {
+        console.error(err);
+    }
 };
 runner();
 //# sourceMappingURL=example.js.map

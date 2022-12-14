@@ -26,8 +26,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fileStreamWrapper = void 0;
+exports.fileStreamWrapper = exports.getContextInfoStr = void 0;
 const fsp = __importStar(require("node:fs/promises"));
+const getContextInfoStr = (context) => {
+    if (context.inputFileName) {
+        return `[${context.inputFileName}:${context.linesRead}]`;
+    }
+    return `line [${context.linesRead}]`;
+};
+exports.getContextInfoStr = getContextInfoStr;
 const fileStreamWrapper = (proc) => {
     return (inputFileNameOrStream, outputFileNameOrStream
     // options?: TOptions

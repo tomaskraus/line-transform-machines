@@ -22,34 +22,40 @@ const createMapLineMachine = (mapFn, options) => {
         const r = input.pipe(transformToLines);
         context.linesRead = 0;
         let notNullAlreadyRead = false;
-        for await (const line of r) {
-            context.linesRead++;
-            let lineResult;
-            if (finalOptions.useAsyncFn) {
-                lineResult = await mapFn.call(finalOptions.thisArg, line, context.linesRead);
-            }
-            else {
-                lineResult = mapFn.call(finalOptions.thisArg, line, context.linesRead);
-            }
-            if (lineResult !== null &&
-                finalOptions.rememberEndOfLines &&
-                notNullAlreadyRead) {
-                lineResult = '\n' + lineResult;
-            }
-            if (lineResult !== null) {
-                notNullAlreadyRead = true;
-            }
-            if (lineResult !== null && lineResult !== '') {
-                const canContinue = output.write(lineResult);
-                // from https://www.nodejsdesignpatterns.com/blog/javascript-async-iterators/
-                if (!canContinue) {
-                    // backpressure, now we stop and we need to wait for drain
-                    await (0, events_1.once)(output, 'drain');
-                    // ok now it's safe to resume writing
+        try {
+            for await (const line of r) {
+                context.linesRead++;
+                let lineResult;
+                if (finalOptions.useAsyncFn) {
+                    lineResult = await mapFn.call(finalOptions.thisArg, line, context.linesRead);
+                }
+                else {
+                    lineResult = mapFn.call(finalOptions.thisArg, line, context.linesRead);
+                }
+                if (lineResult !== null &&
+                    finalOptions.rememberEndOfLines &&
+                    notNullAlreadyRead) {
+                    lineResult = '\n' + lineResult;
+                }
+                if (lineResult !== null) {
+                    notNullAlreadyRead = true;
+                }
+                if (lineResult !== null && lineResult !== '') {
+                    const canContinue = output.write(lineResult);
+                    // from https://www.nodejsdesignpatterns.com/blog/javascript-async-iterators/
+                    if (!canContinue) {
+                        // backpressure, now we stop and we need to wait for drain
+                        await (0, events_1.once)(output, 'drain');
+                        // ok now it's safe to resume writing
+                    }
                 }
             }
+            return Promise.resolve(context);
         }
-        return Promise.resolve(context);
+        catch (err) {
+            err.message = `${(0, filestreamwrapper_1.getContextInfoStr)(context)}\n${err.message}`;
+            return Promise.reject(err);
+        }
     };
     return (0, filestreamwrapper_1.fileStreamWrapper)(proc);
 };

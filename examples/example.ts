@@ -5,7 +5,11 @@ const toUpper = (s: string) => s.toUpperCase();
 const lineMachine = createMapLineMachine(toUpper);
 
 const runner = async () => {
-  const res = await lineMachine('./examples/input.txt', stdout);
-  console.log(res);
+  try {
+    const stats = await lineMachine('./examples/input.txt', stdout);
+    console.log('\nstats:', stats);
+  } catch (err) {
+    console.error(err);
+  }
 };
 runner();

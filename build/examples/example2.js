@@ -10,8 +10,13 @@ const toUpperAndNonEmptyIndexed = (s, lineNumber) => {
 };
 const lineMachine = (0, maplinemachine_1.createMapLineMachine)(toUpperAndNonEmptyIndexed);
 const runner = async () => {
-    const res = await lineMachine('./examples/input.txt', node_process_1.stdout);
-    console.log('\n', res);
+    try {
+        const stats = await lineMachine('./examples/input.txt', node_process_1.stdout);
+        console.log('\nstats:', stats);
+    }
+    catch (err) {
+        console.error(err);
+    }
 };
 runner();
 //# sourceMappingURL=example2.js.map

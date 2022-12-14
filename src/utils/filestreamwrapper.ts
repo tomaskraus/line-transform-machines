@@ -11,6 +11,13 @@ export type TFileStreamContext = {
   linesRead: number;
 };
 
+export const getContextInfoStr = (context: TFileStreamContext): string => {
+  if (context.inputFileName) {
+    return `[${context.inputFileName}:${context.linesRead}]`;
+  }
+  return `line [${context.linesRead}]`;
+};
+
 export type TStreamProcessor<TResult> = (
   input: stream.Readable,
   output: stream.Writable,

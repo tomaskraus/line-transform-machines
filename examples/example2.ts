@@ -10,7 +10,11 @@ const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {
 const lineMachine = createMapLineMachine(toUpperAndNonEmptyIndexed);
 
 const runner = async () => {
-  const res = await lineMachine('./examples/input.txt', stdout);
-  console.log('\n', res);
+  try {
+    const stats = await lineMachine('./examples/input.txt', stdout);
+    console.log('\nstats:', stats);
+  } catch (err) {
+    console.error(err);
+  }
 };
 runner();
