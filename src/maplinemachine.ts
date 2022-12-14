@@ -42,15 +42,19 @@ export const mapLineMachine = (
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
     const r = input.pipe(transformToLines);
     fileStats.linesRead = 0;
+    let notNullAlreadyRead = false;
     for await (const line of r) {
       fileStats.linesRead++;
       let lineResult = await asyncMapFn(line, fileStats.linesRead);
       if (
         lineResult !== null &&
-        finalOptions.rememberEndOfLines === true &&
-        fileStats.linesRead > 1
+        finalOptions.rememberEndOfLines &&
+        notNullAlreadyRead
       ) {
         lineResult = '\n' + lineResult;
+      }
+      if (lineResult !== null) {
+        notNullAlreadyRead = true;
       }
       if (lineResult !== null && lineResult !== '') {
         const canContinue = output.write(lineResult);

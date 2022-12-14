@@ -79,7 +79,7 @@ describe('transform', () => {
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
     });
-    test('transfers Fn Error', async () => {
+    test('transfers Fn Error - async', async () => {
         const fnWithErr = async (line, lineNumber) => {
             if (lineNumber === 2) {
                 throw new Error('line is 2!');
@@ -90,12 +90,5 @@ describe('transform', () => {
         const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
     });
-    // test('sync fn', async () => {
-    //   const syncFn = async (line: string) => `(${line})`;
-    //   const lnMachine = mapLineMachine(syncFn, {rememberEndOfLines: false});
-    //   const res = await lnMachine(input, output);
-    //   expect(res.linesRead).toEqual(2);
-    //   expect(output.toString()).toEqual('(Hello, )(World1!)');
-    // });
 });
 //# sourceMappingURL=maplinemachine-transform.test.js.map

@@ -73,7 +73,8 @@ describe('transform', () => {
     expect(res.linesRead).toEqual(2); //line read count remains the same
     expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
   });
-  test('transfers Fn Error', async () => {
+
+  test('transfers Fn Error - async', async () => {
     const fnWithErr: TAsyncMapLineFn = async (
       line: string,
       lineNumber: number

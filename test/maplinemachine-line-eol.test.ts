@@ -99,4 +99,28 @@ describe('lines & EOLs', () => {
     expect(res.linesRead).toEqual(3);
     expect(output.toString()).toEqual('Hello, \nWorld!\n');
   });
+
+  test('Deletion of line at the end of file decreases number of lines written', async () => {
+    const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
+    const deleteLastLineFn = async (line: string, lineNumber: number) =>
+      lineNumber === 2 ? null : line;
+    const lnMachine = mapLineMachine(deleteLastLineFn);
+
+    const res = await lnMachine(input, output);
+
+    expect(res.linesRead).toEqual(2);
+    expect(output.toString()).toEqual('Hello, ');
+  });
+
+  test('Delete the first line of file', async () => {
+    const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
+    const deleteLastLineFn = async (line: string, lineNumber: number) =>
+      lineNumber === 1 ? null : line;
+    const lnMachine = mapLineMachine(deleteLastLineFn);
+
+    const res = await lnMachine(input, output);
+
+    expect(res.linesRead).toEqual(2);
+    expect(output.toString()).toEqual('World!');
+  });
 });
