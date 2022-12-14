@@ -5,7 +5,7 @@ duplicates filestreamwrapper tests
 import mock from 'mock-fs';
 
 import {mapLineMachine} from '../src/maplinemachine';
-import type {TAsyncMapLineFn} from '../src/maplinemachine';
+import type {TMapLineFn} from '../src/maplinemachine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -29,12 +29,10 @@ afterEach(() => {
   mock.restore();
 });
 
-const copyFn: TAsyncMapLineFn = async (
+const copyFn: TMapLineFn = (
   line: string
   //   lineNumber: number
-): Promise<string> => {
-  return Promise.resolve(line);
-};
+): string => line;
 
 const copyProcessor = mapLineMachine(copyFn);
 

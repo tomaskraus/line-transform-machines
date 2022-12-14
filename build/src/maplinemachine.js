@@ -12,7 +12,7 @@ exports.DEFAULT_LTM_OPTIONS = {
     useAsyncFn: false,
     thisArg: this,
 };
-const mapLineMachine = (asyncMapFn, options) => {
+const mapLineMachine = (mapFn, options) => {
     const proc = async (input, output, context) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
@@ -24,7 +24,13 @@ const mapLineMachine = (asyncMapFn, options) => {
         let notNullAlreadyRead = false;
         for await (const line of r) {
             context.linesRead++;
-            let lineResult = await asyncMapFn.call(finalOptions.thisArg, line, context.linesRead);
+            let lineResult;
+            if (finalOptions.useAsyncFn) {
+                lineResult = await mapFn.call(finalOptions.thisArg, line, context.linesRead);
+            }
+            else {
+                lineResult = mapFn.call(finalOptions.thisArg, line, context.linesRead);
+            }
             if (lineResult !== null &&
                 finalOptions.rememberEndOfLines &&
                 notNullAlreadyRead) {

@@ -1,7 +1,7 @@
 import {mapLineMachine} from '../src/maplinemachine';
 import {stdout} from 'node:process';
 
-const toUpper = async (s: string) => s.toUpperCase();
+const toUpper = (s: string) => s.toUpperCase();
 const lineMachine = mapLineMachine(toUpper);
 
 const runner = async () => {

@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {mapLineMachine} from '../src/maplinemachine';
-import type {TAsyncMapLineFn} from '../src/maplinemachine';
+import type {TMapLineFn} from '../src/maplinemachine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -26,12 +26,10 @@ afterEach(() => {
   mock.restore();
 });
 
-const copyFn: TAsyncMapLineFn = async (
+const copyFn: TMapLineFn = (
   line: string
   //   lineNumber: number
-): Promise<string> => {
-  return Promise.resolve(line);
-};
+): string => line;
 
 describe('lines & EOLs', () => {
   let output: stream.Writable;
@@ -102,7 +100,7 @@ describe('lines & EOLs', () => {
 
   test('Deletion of line at the end of file decreases number of lines written', async () => {
     const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
-    const deleteLastLineFn = async (line: string, lineNumber: number) =>
+    const deleteLastLineFn = (line: string, lineNumber: number) =>
       lineNumber === 2 ? null : line;
     const lnMachine = mapLineMachine(deleteLastLineFn);
 
@@ -114,7 +112,7 @@ describe('lines & EOLs', () => {
 
   test('Delete the first line of file', async () => {
     const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
-    const deleteLastLineFn = async (line: string, lineNumber: number) =>
+    const deleteLastLineFn = (line: string, lineNumber: number) =>
       lineNumber === 1 ? null : line;
     const lnMachine = mapLineMachine(deleteLastLineFn);
 

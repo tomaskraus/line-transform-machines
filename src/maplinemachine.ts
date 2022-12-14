@@ -5,6 +5,8 @@ import {fileStreamWrapper} from './utils/filestreamwrapper';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
+export type TMapLineFn = (line: string, lineNumber: number) => string | null;
+
 export type TAsyncMapLineFn = (
   line: string,
   lineNumber: number
@@ -29,7 +31,7 @@ export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
 };
 
 export const mapLineMachine = (
-  asyncMapFn: TAsyncMapLineFn,
+  mapFn: TMapLineFn | TAsyncMapLineFn,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileStreamContext> => {
   const proc: TStreamProcessor<TFileStreamContext> = async (
@@ -47,11 +49,20 @@ export const mapLineMachine = (
     let notNullAlreadyRead = false;
     for await (const line of r) {
       context.linesRead++;
-      let lineResult = await asyncMapFn.call(
-        finalOptions.thisArg,
-        line,
-        context.linesRead
-      );
+      let lineResult: string | null;
+      if (finalOptions.useAsyncFn) {
+        lineResult = await (mapFn as TAsyncMapLineFn).call(
+          finalOptions.thisArg,
+          line,
+          context.linesRead
+        );
+      } else {
+        lineResult = (mapFn as TMapLineFn).call(
+          finalOptions.thisArg,
+          line,
+          context.linesRead
+        );
+      }
       if (
         lineResult !== null &&
         finalOptions.rememberEndOfLines &&

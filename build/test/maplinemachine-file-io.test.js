@@ -49,11 +49,9 @@ const PATH_PREFIX = './my-dir';
 afterEach(() => {
     mock_fs_1.default.restore();
 });
-const copyFn = async (line
+const copyFn = (line
 //   lineNumber: number
-) => {
-    return Promise.resolve(line);
-};
+) => line;
 const copyProcessor = (0, maplinemachine_1.mapLineMachine)(copyFn);
 // -----------------------------------------------------------------------
 describe('input stream', () => {

@@ -44,10 +44,10 @@ afterEach(() => {
     mock_fs_1.default.restore();
 });
 describe('transform', () => {
-    const lineNumberFn = async (line, lineNumber) => {
+    const lineNumberFn = (line, lineNumber) => {
         return `${lineNumber}: ${line}`;
     };
-    const noDollyFn = async (line) => {
+    const noDollyFn = (line) => {
         if (line.trim() === 'Dolly') {
             return null;
         }
@@ -73,14 +73,14 @@ describe('transform', () => {
         expect(output.toString()).toEqual('hello\n nwelcome \n');
     });
     test('outputs more lines if fn returns a string with newLine(s)', async () => {
-        const nlFn = async (line) => `-\n${line}`;
+        const nlFn = (line) => `-\n${line}`;
         const lnMachine = (0, maplinemachine_1.mapLineMachine)(nlFn);
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
     });
-    test('transfers Fn Error - async', async () => {
-        const fnWithErr = async (line, lineNumber) => {
+    test('transfers Fn Error', async () => {
+        const fnWithErr = (line, lineNumber) => {
             if (lineNumber === 2) {
                 throw new Error('line is 2!');
                 // return Promise.reject(new Error('line is 2!'));
@@ -90,26 +90,67 @@ describe('transform', () => {
         const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
     });
-    test('transfers this in Fn - async', async () => {
-        async function fnWithThis(line, lineNumber) {
+    test('transfers this in Fn', async () => {
+        function fnWithThis(line, lineNumber) {
             if (lineNumber === (this === null || this === void 0 ? void 0 : this.lineNum)) {
                 return null;
             }
             return line;
         }
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithThis, { thisArg: { lineNum: 2 } });
+        const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithThis, {
+            thisArg: { lineNum: 2 },
+        });
         // same as:
         // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('Hello, ');
     });
-    // test('sync fn', async () => {
-    //   const syncFn = async (line: string) => `(${line})`;
-    //   const lnMachine = mapLineMachine(syncFn, {rememberEndOfLines: false});
+    // test('transfers Fn Error - async', async () => {
+    //   const asyncfnWithErr: TAsyncMapLineFn = async (
+    //     line: string,
+    //     lineNumber: number
+    //   ) => {
+    //     if (lineNumber === 2) {
+    //       throw new Error('line is 2!');
+    //       // return Promise.reject(new Error('line is 2!'));
+    //     }
+    //     return `-\n${line}`;
+    //   };
+    //   const lnMachine = mapLineMachine(asyncfnWithErr, {useAsyncFn: true});
+    //   await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
+    // });
+    // test('transfers this in Fn - async', async () => {
+    //   async function fnWithThis(line: string, lineNumber: number) {
+    //     if (lineNumber === this?.lineNum) {
+    //       return null;
+    //     }
+    //     return line;
+    //   }
+    //   const lnMachine = mapLineMachine(fnWithThis, {
+    //     thisArg: {lineNum: 2},
+    //     useAsyncFn: true,
+    //   });
+    //   // same as:
+    //   // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
+    //   const res = await lnMachine(input, output);
+    //   expect(res.linesRead).toEqual(2); //line read count remains the same
+    //   expect(output.toString()).toEqual('Hello, ');
+    // });
+    // test('async fn', async () => {
+    //   const asyncFn = async (line: string) =>
+    //     new Promise<string>(resolve => {
+    //       setTimeout(() => {
+    //         resolve(line);
+    //       }, 0);
+    //     });
+    //   const lnMachine = mapLineMachine(asyncFn, {
+    //     useAsyncFn: true,
+    //     rememberEndOfLines: false,
+    //   });
     //   const res = await lnMachine(input, output);
     //   expect(res.linesRead).toEqual(2);
-    //   expect(output.toString()).toEqual('(Hello, )(World1!)');
+    //   expect(output.toString()).toEqual('(Hello, )(World!)');
     // });
 });
 //# sourceMappingURL=maplinemachine-transform.test.js.map
