@@ -52,7 +52,7 @@ afterEach(() => {
 const copyFn = (line
 //   lineNumber: number
 ) => line;
-const copyProcessor = (0, maplinemachine_1.mapLineMachine)(copyFn);
+const copyProcessor = (0, maplinemachine_1.createMapLineMachine)(copyFn);
 // -----------------------------------------------------------------------
 describe('input stream', () => {
     let inputFileStream;

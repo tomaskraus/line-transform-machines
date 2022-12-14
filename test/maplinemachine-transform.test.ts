@@ -1,6 +1,6 @@
 import mock from 'mock-fs';
 
-import {mapLineMachine} from '../src/maplinemachine';
+import {createMapLineMachine} from '../src/maplinemachine';
 import type {TMapLineFn, TAsyncMapLineFn} from '../src/maplinemachine';
 import stream from 'stream';
 
@@ -45,7 +45,7 @@ describe('transform', () => {
   });
 
   test('line numbers', async () => {
-    const lnMachine = mapLineMachine(lineNumberFn);
+    const lnMachine = createMapLineMachine(lineNumberFn);
 
     const res = await lnMachine(input, output);
 
@@ -56,7 +56,7 @@ describe('transform', () => {
   test('outputs less lines if fn returns null', async () => {
     const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);
 
-    const lnMachine = mapLineMachine(noDollyFn);
+    const lnMachine = createMapLineMachine(noDollyFn);
 
     const res = await lnMachine(inputWithDolly, output);
 
@@ -67,7 +67,7 @@ describe('transform', () => {
   test('outputs more lines if fn returns a string with newLine(s)', async () => {
     const nlFn: TMapLineFn = (line: string) => `-\n${line}`;
 
-    const lnMachine = mapLineMachine(nlFn);
+    const lnMachine = createMapLineMachine(nlFn);
 
     const res = await lnMachine(input, output);
     expect(res.linesRead).toEqual(2); //line read count remains the same
@@ -83,7 +83,7 @@ describe('transform', () => {
       return `-\n${line}`;
     };
 
-    const lnMachine = mapLineMachine(fnWithErr);
+    const lnMachine = createMapLineMachine(fnWithErr);
     await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
   });
 
@@ -95,7 +95,7 @@ describe('transform', () => {
       return line;
     }
 
-    const lnMachine = mapLineMachine(fnWithThis, {
+    const lnMachine = createMapLineMachine(fnWithThis, {
       thisArg: {lineNum: 2},
     });
     // same as:

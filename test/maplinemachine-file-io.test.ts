@@ -4,7 +4,7 @@ duplicates filestreamwrapper tests
 
 import mock from 'mock-fs';
 
-import {mapLineMachine} from '../src/maplinemachine';
+import {createMapLineMachine} from '../src/maplinemachine';
 import type {TMapLineFn} from '../src/maplinemachine';
 import stream from 'stream';
 
@@ -34,7 +34,7 @@ const copyFn: TMapLineFn = (
   //   lineNumber: number
 ): string => line;
 
-const copyProcessor = mapLineMachine(copyFn);
+const copyProcessor = createMapLineMachine(copyFn);
 
 // -----------------------------------------------------------------------
 

@@ -56,7 +56,7 @@ describe('transform - async', () => {
                 resolve(`(${line})`);
             }, 0);
         });
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(asyncFn, {
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(asyncFn, {
             useAsyncFn: true,
             rememberEndOfLines: false,
         });
@@ -72,7 +72,7 @@ describe('transform - async', () => {
             }
             return `-\n${line}`;
         };
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(asyncfnWithErr, { useAsyncFn: true });
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(asyncfnWithErr, { useAsyncFn: true });
         await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
     });
     test('transfers this in Fn - async', async () => {
@@ -82,7 +82,7 @@ describe('transform - async', () => {
             }
             return line;
         }
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(asyncFnWithThis, {
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(asyncFnWithThis, {
             thisArg: { lineNum: 2 },
             useAsyncFn: true,
         });

@@ -14,4 +14,4 @@ export type TLineMachineOptions = {
     thisArg: any;
 };
 export declare const DEFAULT_LTM_OPTIONS: TLineMachineOptions;
-export declare const mapLineMachine: (mapFn: TMapLineFn | TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileStreamContext>;
+export declare const createMapLineMachine: (mapFn: TMapLineFn | TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileStreamContext>;

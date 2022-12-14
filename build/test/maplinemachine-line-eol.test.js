@@ -57,34 +57,34 @@ describe('lines & EOLs', () => {
     });
     test('empty input file', async () => {
         const inputEmpty = fs.createReadStream(`${PATH_PREFIX}/empty.txt`);
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(copyFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn);
         const res = await lnMachine(inputEmpty, output);
         expect(res.linesRead).toEqual(0);
         expect(output.toString()).toEqual('');
     });
     test('one line without EOL means one line', async () => {
         const oneLine = fs.createReadStream(`${PATH_PREFIX}/one-line.txt`);
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(copyFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn);
         const res = await lnMachine(oneLine, output);
         expect(res.linesRead).toEqual(1);
         expect(output.toString()).toEqual('one line');
     });
     test('one EOL means two lines', async () => {
         const oneEOL = fs.createReadStream(`${PATH_PREFIX}/one-eol.txt`);
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(copyFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn);
         const res = await lnMachine(oneEOL, output);
         expect(res.linesRead).toEqual(2);
         expect(output.toString()).toEqual('\n');
     });
     test('preserves empty lines', async () => {
         const inputEmptyLines = fs.createReadStream(`${PATH_PREFIX}/two-eols.txt`);
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(copyFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn);
         const res = await lnMachine(inputEmptyLines, output);
         expect(res.linesRead).toEqual(3); //two EOLs means three lines
         expect(output.toString()).toEqual('\n\n');
     });
     test('exclude EOLs', async () => {
-        const withoutEOLSMachine = (0, maplinemachine_1.mapLineMachine)(copyFn, {
+        const withoutEOLSMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn, {
             rememberEndOfLines: false,
         });
         const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
@@ -94,7 +94,7 @@ describe('lines & EOLs', () => {
     });
     test('EOL at the end of file', async () => {
         const input = fs.createReadStream(`${PATH_PREFIX}/my-file-eol-end.txt`);
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(copyFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(copyFn);
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(3);
         expect(output.toString()).toEqual('Hello, \nWorld!\n');
@@ -102,7 +102,7 @@ describe('lines & EOLs', () => {
     test('Deletion of line at the end of file decreases number of lines written', async () => {
         const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
         const deleteLastLineFn = (line, lineNumber) => lineNumber === 2 ? null : line;
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(deleteLastLineFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(deleteLastLineFn);
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(2);
         expect(output.toString()).toEqual('Hello, ');
@@ -110,7 +110,7 @@ describe('lines & EOLs', () => {
     test('Delete the first line of file', async () => {
         const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
         const deleteLastLineFn = (line, lineNumber) => lineNumber === 1 ? null : line;
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(deleteLastLineFn);
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(deleteLastLineFn);
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(2);
         expect(output.toString()).toEqual('World!');

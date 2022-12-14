@@ -30,7 +30,7 @@ export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
   thisArg: this,
 };
 
-export const mapLineMachine = (
+export const createMapLineMachine = (
   mapFn: TMapLineFn | TAsyncMapLineFn,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileStreamContext> => {
