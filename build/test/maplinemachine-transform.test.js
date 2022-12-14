@@ -90,5 +90,24 @@ describe('transform', () => {
         const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
     });
+    test('transfers this in Fn - async', async () => {
+        async function fnWithThis(line, lineNumber) {
+            if (lineNumber === (this === null || this === void 0 ? void 0 : this.lineNum)) {
+                return null;
+            }
+            return line;
+        }
+        const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithThis.bind({ lineNum: 2 }));
+        const res = await lnMachine(input, output);
+        expect(res.linesRead).toEqual(2); //line read count remains the same
+        expect(output.toString()).toEqual('Hello, ');
+    });
+    // test('sync fn', async () => {
+    //   const syncFn = async (line: string) => `(${line})`;
+    //   const lnMachine = mapLineMachine(syncFn, {rememberEndOfLines: false});
+    //   const res = await lnMachine(input, output);
+    //   expect(res.linesRead).toEqual(2);
+    //   expect(output.toString()).toEqual('(Hello, )(World1!)');
+    // });
 });
 //# sourceMappingURL=maplinemachine-transform.test.js.map
