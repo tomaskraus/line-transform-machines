@@ -97,7 +97,9 @@ describe('transform', () => {
             }
             return line;
         }
-        const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithThis.bind({ lineNum: 2 }));
+        const lnMachine = (0, maplinemachine_1.mapLineMachine)(fnWithThis, { thisArg: { lineNum: 2 } });
+        // same as:
+        // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
         const res = await lnMachine(input, output);
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('Hello, ');

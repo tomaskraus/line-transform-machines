@@ -10,6 +10,7 @@ const filestreamwrapper_1 = require("./utils/filestreamwrapper");
 exports.DEFAULT_LTM_OPTIONS = {
     rememberEndOfLines: true,
     useAsyncFn: false,
+    thisArg: this,
 };
 const mapLineMachine = (asyncMapFn, options) => {
     const proc = async (input, output, context) => {
@@ -23,7 +24,7 @@ const mapLineMachine = (asyncMapFn, options) => {
         let notNullAlreadyRead = false;
         for await (const line of r) {
             context.linesRead++;
-            let lineResult = await asyncMapFn(line, context.linesRead);
+            let lineResult = await asyncMapFn.call(finalOptions.thisArg, line, context.linesRead);
             if (lineResult !== null &&
                 finalOptions.rememberEndOfLines &&
                 notNullAlreadyRead) {

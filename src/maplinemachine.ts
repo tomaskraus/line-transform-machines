@@ -19,11 +19,13 @@ export type TLineMachineOptions = {
    */
   rememberEndOfLines: boolean;
   useAsyncFn: boolean;
+  thisArg: any;
 };
 
 export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
   rememberEndOfLines: true,
   useAsyncFn: false,
+  thisArg: this,
 };
 
 export const mapLineMachine = (
@@ -45,7 +47,11 @@ export const mapLineMachine = (
     let notNullAlreadyRead = false;
     for await (const line of r) {
       context.linesRead++;
-      let lineResult = await asyncMapFn(line, context.linesRead);
+      let lineResult = await asyncMapFn.call(
+        finalOptions.thisArg,
+        line,
+        context.linesRead
+      );
       if (
         lineResult !== null &&
         finalOptions.rememberEndOfLines &&

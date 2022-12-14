@@ -10,6 +10,7 @@ export type TLineMachineOptions = {
      */
     rememberEndOfLines: boolean;
     useAsyncFn: boolean;
+    thisArg: any;
 };
 export declare const DEFAULT_LTM_OPTIONS: TLineMachineOptions;
 export declare const mapLineMachine: (asyncMapFn: TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileStreamContext>;
