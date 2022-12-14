@@ -30,6 +30,9 @@ const mock_fs_1 = __importDefault(require("mock-fs"));
 const maplinemachine_1 = require("../src/maplinemachine");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
+let input;
+let output;
+beforeEach(() => { });
 beforeEach(() => {
     (0, mock_fs_1.default)({
         'my-dir': {
@@ -38,6 +41,8 @@ beforeEach(() => {
         },
     });
     mock_fs_1.default.file();
+    input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
+    output = new mStream.WritableStream();
 });
 const PATH_PREFIX = './my-dir';
 afterEach(() => {
@@ -53,12 +58,6 @@ describe('transform', () => {
         }
         return line;
     };
-    let input;
-    let output;
-    beforeEach(() => {
-        input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
-        output = new mStream.WritableStream();
-    });
     test('line numbers', async () => {
         const lnMachine = (0, maplinemachine_1.createMapLineMachine)(lineNumberFn);
         const res = await lnMachine(input, output);
@@ -79,38 +78,6 @@ describe('transform', () => {
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
     });
-    test('transfers Fn Error - include error message', async () => {
-        const fnWithErr = (line, lineNumber) => {
-            if (lineNumber === 2) {
-                throw new Error('line2 err!');
-                // return Promise.reject(new Error('line is 2!'));
-            }
-            return `-\n${line}`;
-        };
-        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
-        await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
-    });
-    test('transfers Fn Error - include input stream line info', async () => {
-        const fnWithErr = (line, lineNumber) => {
-            if (lineNumber === 2) {
-                throw new Error('line2 err!');
-                // return Promise.reject(new Error('line is 2!'));
-            }
-            return `-\n${line}`;
-        };
-        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
-        await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
-    });
-    test('transfers Fn Error - include file & line info', async () => {
-        const fnWithErr = (line, lineNumber) => {
-            if (lineNumber === 2) {
-                throw new Error('line2 err!');
-            }
-            return `-\n${line}`;
-        };
-        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
-        await expect(lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)).rejects.toThrow('/dolly-text.txt:2');
-    });
     test('transfers this in Fn', async () => {
         function fnWithThis(line, lineNumber) {
             if (lineNumber === (this === null || this === void 0 ? void 0 : this.lineNum)) {
@@ -127,51 +94,26 @@ describe('transform', () => {
         expect(res.linesRead).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('Hello, ');
     });
-    // test('transfers Fn Error - async', async () => {
-    //   const asyncfnWithErr: TAsyncMapLineFn = async (
-    //     line: string,
-    //     lineNumber: number
-    //   ) => {
-    //     if (lineNumber === 2) {
-    //       throw new Error('line is 2!');
-    //       // return Promise.reject(new Error('line is 2!'));
-    //     }
-    //     return `-\n${line}`;
-    //   };
-    //   const lnMachine = mapLineMachine(asyncfnWithErr, {useAsyncFn: true});
-    //   await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
-    // });
-    // test('transfers this in Fn - async', async () => {
-    //   async function fnWithThis(line: string, lineNumber: number) {
-    //     if (lineNumber === this?.lineNum) {
-    //       return null;
-    //     }
-    //     return line;
-    //   }
-    //   const lnMachine = mapLineMachine(fnWithThis, {
-    //     thisArg: {lineNum: 2},
-    //     useAsyncFn: true,
-    //   });
-    //   // same as:
-    //   // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
-    //   const res = await lnMachine(input, output);
-    //   expect(res.linesRead).toEqual(2); //line read count remains the same
-    //   expect(output.toString()).toEqual('Hello, ');
-    // });
-    // test('async fn', async () => {
-    //   const asyncFn = async (line: string) =>
-    //     new Promise<string>(resolve => {
-    //       setTimeout(() => {
-    //         resolve(line);
-    //       }, 0);
-    //     });
-    //   const lnMachine = mapLineMachine(asyncFn, {
-    //     useAsyncFn: true,
-    //     rememberEndOfLines: false,
-    //   });
-    //   const res = await lnMachine(input, output);
-    //   expect(res.linesRead).toEqual(2);
-    //   expect(output.toString()).toEqual('(Hello, )(World!)');
-    // });
+});
+describe('transform - error handling', () => {
+    const fnWithErr = (line, lineNumber) => {
+        if (lineNumber === 2) {
+            throw new Error('line2 err!');
+            // return Promise.reject(new Error('line is 2!'));
+        }
+        return `-\n${line}`;
+    };
+    test('transfers Fn Error - include error message', async () => {
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
+        await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
+    });
+    test('transfers Fn Error - include input stream line info', async () => {
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
+        await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
+    });
+    test('transfers Fn Error - include file & line info', async () => {
+        const lnMachine = (0, maplinemachine_1.createMapLineMachine)(fnWithErr);
+        await expect(lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)).rejects.toThrow('/dolly-text.txt:2');
+    });
 });
 //# sourceMappingURL=maplinemachine-transform.test.js.map

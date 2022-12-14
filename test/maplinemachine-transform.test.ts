@@ -7,6 +7,10 @@ import stream from 'stream';
 import * as mStream from 'memory-streams';
 import * as fs from 'fs';
 
+let input: stream.Readable;
+let output: stream.Writable;
+beforeEach(() => {});
+
 beforeEach(() => {
   mock({
     'my-dir': {
@@ -15,6 +19,9 @@ beforeEach(() => {
     },
   });
   mock.file();
+
+  input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
+  output = new mStream.WritableStream();
 });
 const PATH_PREFIX = './my-dir';
 
@@ -36,13 +43,6 @@ describe('transform', () => {
     }
     return line;
   };
-
-  let input: stream.Readable;
-  let output: stream.Writable;
-  beforeEach(() => {
-    input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
-    output = new mStream.WritableStream();
-  });
 
   test('line numbers', async () => {
     const lnMachine = createMapLineMachine(lineNumberFn);
@@ -74,46 +74,6 @@ describe('transform', () => {
     expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
   });
 
-  test('transfers Fn Error - include error message', async () => {
-    const fnWithErr: TMapLineFn = (line: string, lineNumber: number) => {
-      if (lineNumber === 2) {
-        throw new Error('line2 err!');
-        // return Promise.reject(new Error('line is 2!'));
-      }
-      return `-\n${line}`;
-    };
-
-    const lnMachine = createMapLineMachine(fnWithErr);
-    await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
-  });
-
-  test('transfers Fn Error - include input stream line info', async () => {
-    const fnWithErr: TMapLineFn = (line: string, lineNumber: number) => {
-      if (lineNumber === 2) {
-        throw new Error('line2 err!');
-        // return Promise.reject(new Error('line is 2!'));
-      }
-      return `-\n${line}`;
-    };
-
-    const lnMachine = createMapLineMachine(fnWithErr);
-    await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
-  });
-
-  test('transfers Fn Error - include file & line info', async () => {
-    const fnWithErr: TMapLineFn = (line: string, lineNumber: number) => {
-      if (lineNumber === 2) {
-        throw new Error('line2 err!');
-      }
-      return `-\n${line}`;
-    };
-
-    const lnMachine = createMapLineMachine(fnWithErr);
-    await expect(
-      lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)
-    ).rejects.toThrow('/dolly-text.txt:2');
-  });
-
   test('transfers this in Fn', async () => {
     function fnWithThis(line: string, lineNumber: number) {
       if (lineNumber === this?.lineNum) {
@@ -131,5 +91,32 @@ describe('transform', () => {
     const res = await lnMachine(input, output);
     expect(res.linesRead).toEqual(2); //line read count remains the same
     expect(output.toString()).toEqual('Hello, ');
+  });
+});
+
+describe('transform - error handling', () => {
+  const fnWithErr: TMapLineFn = (line: string, lineNumber: number) => {
+    if (lineNumber === 2) {
+      throw new Error('line2 err!');
+      // return Promise.reject(new Error('line is 2!'));
+    }
+    return `-\n${line}`;
+  };
+
+  test('transfers Fn Error - include error message', async () => {
+    const lnMachine = createMapLineMachine(fnWithErr);
+    await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
+  });
+
+  test('transfers Fn Error - include input stream line info', async () => {
+    const lnMachine = createMapLineMachine(fnWithErr);
+    await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
+  });
+
+  test('transfers Fn Error - include file & line info', async () => {
+    const lnMachine = createMapLineMachine(fnWithErr);
+    await expect(
+      lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)
+    ).rejects.toThrow('/dolly-text.txt:2');
   });
 });
