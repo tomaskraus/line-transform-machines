@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {createMapLineMachine} from '../src/maplinemachine';
-import type {TMapLineFn, TAsyncMapLineFn} from '../src/maplinemachine';
+import type {TMapLineFn} from '../src/maplinemachine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
