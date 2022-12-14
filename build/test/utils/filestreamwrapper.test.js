@@ -30,10 +30,10 @@ const mock_fs_1 = __importDefault(require("mock-fs"));
 const filestreamwrapper_1 = require("../../src/utils/filestreamwrapper");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
-const copyStreamProcessor = (input, output, fileStats) => {
+const copyStreamProcessor = (input, output, context) => {
     return new Promise((resolve, reject) => {
         input.pipe(output, { end: true });
-        input.on('end', () => resolve(fileStats));
+        input.on('end', () => resolve(context));
         input.on('error', err => reject(err));
     });
 };

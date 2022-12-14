@@ -5,7 +5,7 @@
 import stream from 'stream';
 import * as fsp from 'node:fs/promises';
 
-export type TFileStreamStats = {
+export type TFileStreamContext = {
   inputFileName?: string;
   outputFileName?: string;
   linesRead: number;
@@ -14,7 +14,7 @@ export type TFileStreamStats = {
 export type TStreamProcessor<TResult> = (
   input: stream.Readable,
   output: stream.Writable,
-  fileStats: TFileStreamStats
+  context: TFileStreamContext
 ) => Promise<TResult>;
 
 export type TFileProcessor<TResult> = (
@@ -35,10 +35,10 @@ export const fileStreamWrapper = <TResult>(
       const continueWithInStreamReady = (
         inStream: stream.Readable,
         outStream: stream.Writable,
-        fileStats: TFileStreamStats
+        context: TFileStreamContext
       ) => {
         inStream.on('error', err => reject(err));
-        proc(inStream, outStream, fileStats)
+        proc(inStream, outStream, context)
           .then((res: TResult) => {
             // outStream.end();   // closes also stdout
             resolve(res);
@@ -48,7 +48,7 @@ export const fileStreamWrapper = <TResult>(
 
       const continueWithOutStreamReady = (
         outStream: stream.Writable,
-        fileStats: TFileStreamStats
+        context: TFileStreamContext
       ): void => {
         outStream.on('error', err => reject(err));
         if (typeof inputFileNameOrStream === 'string') {
@@ -56,33 +56,29 @@ export const fileStreamWrapper = <TResult>(
             .open(inputFileNameOrStream)
             .then(fhi =>
               continueWithInStreamReady(fhi.createReadStream(), outStream, {
-                ...fileStats,
+                ...context,
                 inputFileName: inputFileNameOrStream,
               })
             )
             .catch(err => reject(err));
         } else {
-          continueWithInStreamReady(
-            inputFileNameOrStream,
-            outStream,
-            fileStats
-          );
+          continueWithInStreamReady(inputFileNameOrStream, outStream, context);
         }
       };
 
-      const fileStats: TFileStreamStats = {linesRead: 0};
+      const context: TFileStreamContext = {linesRead: 0};
       if (typeof outputFileNameOrStream === 'string') {
         fsp
           .open(outputFileNameOrStream, 'w')
           .then(fho =>
             continueWithOutStreamReady(fho.createWriteStream(), {
-              ...fileStats,
+              ...context,
               outputFileName: outputFileNameOrStream,
             })
           )
           .catch(err => reject(err));
       } else {
-        continueWithOutStreamReady(outputFileNameOrStream, fileStats);
+        continueWithOutStreamReady(outputFileNameOrStream, context);
       }
     });
   };

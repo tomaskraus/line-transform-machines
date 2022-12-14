@@ -1,4 +1,4 @@
-import type { TFileStreamStats } from './utils/filestreamwrapper';
+import type { TFileStreamContext } from './utils/filestreamwrapper';
 import type { TFileProcessor } from './utils/filestreamwrapper';
 export type TAsyncMapLineFn = (line: string, lineNumber: number) => Promise<string | null>;
 /**
@@ -12,4 +12,4 @@ export type TLineMachineOptions = {
     useAsyncFn: boolean;
 };
 export declare const DEFAULT_LTM_OPTIONS: TLineMachineOptions;
-export declare const mapLineMachine: (asyncMapFn: TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileStreamStats>;
+export declare const mapLineMachine: (asyncMapFn: TAsyncMapLineFn, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileStreamContext>;

@@ -3,7 +3,7 @@ import mock from 'mock-fs';
 import {fileStreamWrapper} from '../../src/utils/filestreamwrapper';
 import type {
   TStreamProcessor,
-  TFileStreamStats,
+  TFileStreamContext,
 } from '../../src/utils/filestreamwrapper';
 import stream from 'stream';
 
@@ -11,14 +11,14 @@ import * as mStream from 'memory-streams';
 
 import * as fs from 'fs';
 
-const copyStreamProcessor: TStreamProcessor<TFileStreamStats> = (
+const copyStreamProcessor: TStreamProcessor<TFileStreamContext> = (
   input: stream.Readable,
   output: stream.Writable,
-  fileStats: TFileStreamStats
+  context: TFileStreamContext
 ) => {
-  return new Promise<TFileStreamStats>((resolve, reject) => {
+  return new Promise<TFileStreamContext>((resolve, reject) => {
     input.pipe(output, {end: true});
-    input.on('end', () => resolve(fileStats));
+    input.on('end', () => resolve(context));
     input.on('error', err => reject(err));
   });
 };
