@@ -8,7 +8,6 @@ import type {
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
-
 import * as fs from 'fs';
 
 const copyStreamProcessor: TStreamProcessor<TFileStreamContext> = (
@@ -22,6 +21,8 @@ const copyStreamProcessor: TStreamProcessor<TFileStreamContext> = (
     input.on('error', err => reject(err));
   });
 };
+
+const copyProcessor = fileStreamWrapper(copyStreamProcessor);
 
 beforeEach(() => {
   mock({
@@ -40,8 +41,6 @@ const PATH_PREFIX = './my-dir';
 afterEach(() => {
   mock.restore();
 });
-
-const copyProcessor = fileStreamWrapper(copyStreamProcessor);
 
 describe('input stream', () => {
   let inputFileStream: stream.Readable;
@@ -87,19 +86,17 @@ describe('input file', () => {
     const outMemStream = new mStream.WritableStream();
     const res = await copyProcessor(inputFileName, outMemStream);
 
-    expect(res).toHaveProperty('linesRead');
     expect(res.inputFileName).toContain('my-file.txt');
-
+    expect(res.outputFileName).toBeUndefined();
+    expect(res).toHaveProperty('linesRead');
     expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
   });
 
   test('output as file - ok', async () => {
     const res = await copyProcessor(inputFileName, `${PATH_PREFIX}/out2.txt`);
 
-    expect(res).toHaveProperty('linesRead');
     expect(res.inputFileName).toContain('my-file.txt');
     expect(res.outputFileName).toContain('out2.txt');
-
     const buff = fs.readFileSync(`${PATH_PREFIX}/out2.txt`);
     expect(buff.toString()).toEqual('Hello, \nWorld!');
   });
