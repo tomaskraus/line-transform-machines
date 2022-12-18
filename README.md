@@ -27,9 +27,9 @@ const runner = async () => {
 runner();
 ```
 
-input file (`'./examples/input.txt'`):
+Input file (`'./examples/input.txt'`):
 
-```json
+```
 
 "name": "line-transform-machines",
 
@@ -46,7 +46,7 @@ input file (`'./examples/input.txt'`):
 
 ```
 
-Result:
+Output:
 
 ```
 2: "NAME": "LINE-TRANSFORM-MACHINES",
