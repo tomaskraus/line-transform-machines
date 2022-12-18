@@ -1,8 +1,11 @@
 import {createMapLineMachine} from '../src/maplinemachine';
 import {stdout} from 'node:process';
 
-const toUpper = (s: string) => s.toUpperCase();
-const lineMachine = createMapLineMachine(toUpper);
+const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {
+  if (s.trim().length === 0) return null;
+  return `${lineNum}: ${s.toUpperCase()}`;
+};
+const lineMachine = createMapLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
 const runner = async () => {
   try {
