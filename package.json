@@ -1,7 +1,7 @@
 {
   "name": "line-transform-machines",
   "version": "0.1.0",
-  "description": "Process text input stream/file line by line. Takes care of I/O & Errors. Great for CLI apps.",
+  "description": "Processes text input stream/file line by line. Takes care of I/O &amp; Errors. Great for CLI apps.",
   "types": "build/src/index.d.ts",
   "main": "build/src/index.js",
   "files": [
