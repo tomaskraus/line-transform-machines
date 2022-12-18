@@ -12,7 +12,7 @@ import {stdout} from 'node:process';
 
 const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {
   if (s.trim().length === 0) return null;
-  return `${lineNum}: ${s.toUpperCase()}`;
+  return `${lineNum}:\n    ${s.toUpperCase()}`;
 };
 const lineMachine = createMapLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
@@ -49,13 +49,21 @@ Input file (`'./examples/input.txt'`):
 Output:
 
 ```
-2: "NAME": "LINE-TRANSFORM-MACHINES",
-4:   "VERSION": "0.1.0",
-5:   "DESCRIPTION": "PROCESS TEXT INPUT STREAM/FILE LINE BY LINE. TAKES CARE OF I/O & ERRORS. GREAT FOR CLI APPS.",
-7:   "TYPES": "BUILD/SRC/INDEX.D.TS",
-8:   "MAIN": "BUILD/SRC/INDEX.JS",
-10:   "FILES": [
-11:     "BUILD/SRC"
-12:   ],
+2:
+    "NAME": "LINE-TRANSFORM-MACHINES",
+4:
+      "VERSION": "0.1.0",
+5:
+      "DESCRIPTION": "PROCESS TEXT INPUT STREAM/FILE LINE BY LINE. TAKES CARE OF I/O & ERRORS. GREAT FOR CLI APPS.",
+7:
+      "TYPES": "BUILD/SRC/INDEX.D.TS",
+8:
+      "MAIN": "BUILD/SRC/INDEX.JS",
+10:
+      "FILES": [
+11:
+        "BUILD/SRC"
+12:
+      ],
 stats: { linesRead: 14, inputFileName: './examples/input.txt' }
 ```

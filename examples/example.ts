@@ -3,7 +3,7 @@ import {stdout} from 'node:process';
 
 const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {
   if (s.trim().length === 0) return null;
-  return `${lineNum}: ${s.toUpperCase()}`;
+  return `${lineNum}:\n    ${s.toUpperCase()}`;
 };
 const lineMachine = createMapLineMachine(toUpperIgnoreEmptyLinesNumbered);
 

@@ -5,7 +5,7 @@ const node_process_1 = require("node:process");
 const toUpperIgnoreEmptyLinesNumbered = (s, lineNum) => {
     if (s.trim().length === 0)
         return null;
-    return `${lineNum}: ${s.toUpperCase()}`;
+    return `${lineNum}:\n    ${s.toUpperCase()}`;
 };
 const lineMachine = (0, maplinemachine_1.createMapLineMachine)(toUpperIgnoreEmptyLinesNumbered);
 const runner = async () => {
