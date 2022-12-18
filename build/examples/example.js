@@ -4,8 +4,8 @@ const maplinemachine_1 = require("../src/maplinemachine");
 const node_process_1 = require("node:process");
 const toUpperIgnoreEmptyLinesNumbered = (s, lineNum) => {
     if (s.trim().length === 0)
-        return null;
-    return `${lineNum}:\n    ${s.toUpperCase()}`;
+        return null; // returning null removes that line from output
+    return `${lineNum}:\n    ${s.toUpperCase()}`; // can 'insert' new lines using newline characters in the string returned
 };
 const lineMachine = (0, maplinemachine_1.createMapLineMachine)(toUpperIgnoreEmptyLinesNumbered);
 const runner = async () => {
