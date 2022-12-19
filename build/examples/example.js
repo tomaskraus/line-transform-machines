@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const maplinemachine_1 = require("../src/maplinemachine");
 const node_process_1 = require("node:process");
+// our callback
 const toUpperIgnoreEmptyLinesNumbered = (s, lineNum) => {
     if (s.trim().length === 0)
         return null; // returning null removes that line from output
