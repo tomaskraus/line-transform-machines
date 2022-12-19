@@ -4,7 +4,9 @@ Processes text input stream/file line by line. Takes care of I/O &amp; Errors. G
 
 Maps/filters input lines by calling a (sync/async) callback on them.
 
-### Example
+### Examples
+
+#### Example 1: line add, delete & transform
 
 ```ts
 import {createMapLineMachine} from 'line-transform-machines';
@@ -66,4 +68,60 @@ Output:
 12:
       ],
 stats: { linesRead: 14, inputFileName: './examples/input.txt' }
+```
+
+#### Example 2: error handling
+
+```ts
+import {createMapLineMachine} from 'line-transform-machines';
+
+// our callback that can throw error
+const normalizeNumbers = (s: string) => {
+  const num = parseInt(s);
+  if (isNaN(num)) throw new Error(`Not a number: ${s}`);
+  return num.toString();
+};
+const lineMachine = createMapLineMachine(normalizeNumbers);
+
+const runner = async () => {
+  try {
+    await lineMachine('./examples/nums.txt', './examples/normalized.txt');
+  } catch (err) {
+    console.error(err);
+  }
+};
+runner();
+```
+
+Input (`./examples/nums.txt`):
+
+```
+45
+62
+ 12
+  6
+hello
+5
+3
+```
+
+Console output:
+
+```bash
+Error: [./examples/nums.txt:5]
+Not a number: hello
+    at Object.normalizeNumbers ...
+```
+
+See that input file name & line is present in error message.
+
+By default, the saved output file contains values before error has been thrown:
+
+Output file (`./examples/normalized.txt`):
+
+```
+45
+62
+12
+6
 ```

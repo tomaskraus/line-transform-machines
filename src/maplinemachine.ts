@@ -5,7 +5,10 @@ import {fileStreamWrapper, getContextInfoStr} from './utils/filestreamwrapper';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
-export type TMapLineFn = (line: string, lineNumber: number) => string | null;
+export type TMapLineCallback = (
+  line: string,
+  lineNumber: number
+) => string | null;
 
 export type TAsyncMapLineFn = (
   line: string,
@@ -31,7 +34,7 @@ export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
 };
 
 export const createMapLineMachine = (
-  mapFn: TMapLineFn | TAsyncMapLineFn,
+  callback: TMapLineCallback | TAsyncMapLineFn,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileStreamContext> => {
   const proc: TStreamProcessor<TFileStreamContext> = async (
@@ -52,13 +55,13 @@ export const createMapLineMachine = (
         context.linesRead++;
         let lineResult: string | null;
         if (finalOptions.useAsyncFn) {
-          lineResult = await (mapFn as TAsyncMapLineFn).call(
+          lineResult = await (callback as TAsyncMapLineFn).call(
             finalOptions.thisArg,
             line,
             context.linesRead
           );
         } else {
-          lineResult = (mapFn as TMapLineFn).call(
+          lineResult = (callback as TMapLineCallback).call(
             finalOptions.thisArg,
             line,
             context.linesRead
