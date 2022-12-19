@@ -113,7 +113,7 @@ Not a number: hello
     at Object.normalizeNumbers ...
 ```
 
-See that input file name & line is present in error message.
+See that input file name & line is present in the error message automatically;)
 
 By default, the saved output file contains values before error has been thrown:
 
