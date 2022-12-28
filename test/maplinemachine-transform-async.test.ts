@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {createMapLineMachine} from '../src/maplinemachine';
-import type {TAsyncMapLineFn} from '../src/maplinemachine';
+import type {TAsyncMapLineCallback} from '../src/maplinemachine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -49,7 +49,7 @@ describe('transform - async', () => {
   });
 
   test('transfers Fn Error - async', async () => {
-    const asyncfnWithErr: TAsyncMapLineFn = async (
+    const asyncfnWithErr: TAsyncMapLineCallback = async (
       line: string,
       lineNumber: number
     ) => {
