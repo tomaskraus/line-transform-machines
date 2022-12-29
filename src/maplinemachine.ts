@@ -2,6 +2,7 @@ import stream from 'stream';
 import ReadlineTransform from 'readline-transform';
 import {once} from 'events';
 import {fileStreamWrapper, getContextInfoStr} from './utils/filestreamwrapper';
+import {Observable, from} from 'rxjs';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
@@ -33,6 +34,32 @@ export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
   thisArg: this,
 };
 
+const _createOutputWriter = (
+  output: stream.Writable,
+  options: TLineMachineOptions
+) => {
+  let notNullAlreadyRead = false;
+
+  const outputWriter = async (line: string | null) => {
+    if (line !== null && options.rememberEndOfLines && notNullAlreadyRead) {
+      line = '\n' + line;
+    }
+    if (line !== null) {
+      notNullAlreadyRead = true;
+    }
+    if (line !== null && line !== '') {
+      const canContinue = output.write(line);
+      // from https://www.nodejsdesignpatterns.com/blog/javascript-async-iterators/
+      if (!canContinue) {
+        // backpressure, now we stop and we need to wait for drain
+        await once(output, 'drain');
+        // ok now it's safe to resume writing
+      }
+    }
+  };
+  return outputWriter;
+};
+
 export const createMapLineMachine = (
   callback: TMapLineCallback | TAsyncMapLineFn,
   options?: Partial<TLineMachineOptions>
@@ -49,7 +76,7 @@ export const createMapLineMachine = (
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
     const r = input.pipe(transformToLines);
     context.linesRead = 0;
-    let notNullAlreadyRead = false;
+    const writeOutput = _createOutputWriter(output, finalOptions);
     try {
       for await (const line of r) {
         context.linesRead++;
@@ -67,25 +94,7 @@ export const createMapLineMachine = (
             context.linesRead
           );
         }
-        if (
-          lineResult !== null &&
-          finalOptions.rememberEndOfLines &&
-          notNullAlreadyRead
-        ) {
-          lineResult = '\n' + lineResult;
-        }
-        if (lineResult !== null) {
-          notNullAlreadyRead = true;
-        }
-        if (lineResult !== null && lineResult !== '') {
-          const canContinue = output.write(lineResult);
-          // from https://www.nodejsdesignpatterns.com/blog/javascript-async-iterators/
-          if (!canContinue) {
-            // backpressure, now we stop and we need to wait for drain
-            await once(output, 'drain');
-            // ok now it's safe to resume writing
-          }
-        }
+        await writeOutput(lineResult);
       }
       return Promise.resolve(context);
     } catch (err) {
@@ -94,6 +103,41 @@ export const createMapLineMachine = (
       }`;
       return Promise.reject(err);
     }
+  };
+
+  return fileStreamWrapper<TFileStreamContext>(proc);
+};
+
+export const createMapLineMachineRxjs = (
+  observableDecorator: (obs: Observable<string>) => Observable<string>,
+  options?: Partial<TLineMachineOptions>
+): TFileProcessor<TFileStreamContext> => {
+  const proc: TStreamProcessor<TFileStreamContext> = async (
+    input: stream.Readable,
+    output: stream.Writable,
+    context: TFileStreamContext
+  ): Promise<TFileStreamContext> => {
+    const finalOptions = {
+      ...DEFAULT_LTM_OPTIONS,
+      ...options,
+    };
+    const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
+    const r = input.pipe(transformToLines);
+    // context.linesRead = 0;
+    const writeOutput = _createOutputWriter(output, finalOptions);
+
+    return new Promise((reject, resolve) =>
+      observableDecorator(from(r)).subscribe({
+        next: writeOutput,
+        error: err => {
+          (err as Error).message = `${getContextInfoStr(context)}\n${
+            (err as Error).message
+          }`;
+          reject(err);
+        },
+        complete: () => resolve(context),
+      })
+    );
   };
 
   return fileStreamWrapper<TFileStreamContext>(proc);

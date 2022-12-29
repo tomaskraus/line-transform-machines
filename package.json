@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@types/readline-transform": "^1.0.1",
-    "readline-transform": "^1.0.0"
+    "readline-transform": "^1.0.0",
+    "rxjs": "^7.8.0"
   }
 }
