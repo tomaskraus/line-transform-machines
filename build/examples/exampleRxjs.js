@@ -10,14 +10,12 @@ const rxjs_1 = require("rxjs");
 //   return `${lineNumber}: ${s.toUpperCase()}`;
 // };
 const deco = (obs) => {
-    return obs.pipe((0, rxjs_1.filter)(v => v.trim().length > 0), 
-    // map((v, i) => {
-    //   if (i === 3) {
-    //     throw new Error('i is 3!');
-    //   }
-    //   return `${i}: ${v}`;
-    // }),
-    (0, rxjs_1.reduce)((count, _) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
+    return obs.pipe((0, rxjs_1.map)((v, i) => {
+        if (i === 3) {
+            throw new Error('i is 3!');
+        }
+        return `${i}: ${v}`;
+    }), (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
 };
 const lineMachine = (0, maplinemachine_1.createMapLineMachineRxjs)(deco);
 const runner = () => {

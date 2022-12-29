@@ -74,9 +74,9 @@ const createMapLineMachineRxjs = (observableDecorator, options) => {
         };
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
-        // context.linesRead = 0;
         const writeOutput = _createOutputWriter(output, finalOptions);
-        return new Promise((reject, resolve) => observableDecorator((0, rxjs_1.from)(r)).subscribe({
+        const initialObservable = (0, rxjs_1.from)(r).pipe((0, rxjs_1.tap)(() => context.linesRead++));
+        return new Promise((reject, resolve) => observableDecorator(initialObservable).subscribe({
             next: writeOutput,
             error: err => {
                 err.message = `${(0, filestreamwrapper_1.getContextInfoStr)(context)}\n${err.message}`;

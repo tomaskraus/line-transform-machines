@@ -2,7 +2,7 @@ import stream from 'stream';
 import ReadlineTransform from 'readline-transform';
 import {once} from 'events';
 import {fileStreamWrapper, getContextInfoStr} from './utils/filestreamwrapper';
-import {Observable, from} from 'rxjs';
+import {Observable, from, tap} from 'rxjs';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
@@ -123,11 +123,14 @@ export const createMapLineMachineRxjs = (
     };
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
     const r = input.pipe(transformToLines);
-    // context.linesRead = 0;
     const writeOutput = _createOutputWriter(output, finalOptions);
 
+    const initialObservable: Observable<string> = from(r).pipe(
+      tap(() => context.linesRead++)
+    );
+
     return new Promise((reject, resolve) =>
-      observableDecorator(from(r)).subscribe({
+      observableDecorator(initialObservable).subscribe({
         next: writeOutput,
         error: err => {
           (err as Error).message = `${getContextInfoStr(context)}\n${

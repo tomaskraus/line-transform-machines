@@ -11,14 +11,14 @@ import {map, filter, reduce, Observable} from 'rxjs';
 
 const deco = (obs: Observable<string>) => {
   return obs.pipe(
+    map((v, i) => {
+      if (i === 3) {
+        throw new Error('i is 3!');
+      }
+      return `${i}: ${v}`;
+    }),
     filter(v => v.trim().length > 0),
-    // map((v, i) => {
-    //   if (i === 3) {
-    //     throw new Error('i is 3!');
-    //   }
-    //   return `${i}: ${v}`;
-    // }),
-    reduce((count: number, _: string) => count + 1, 0),
+    reduce((count: number) => count + 1, 0),
     map(x => x.toString())
   );
 };
