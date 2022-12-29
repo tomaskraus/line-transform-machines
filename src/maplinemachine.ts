@@ -11,7 +11,7 @@ export type TMapLineCallback = (
   lineNumber: number
 ) => string | null;
 
-export type TAsyncMapLineFn = (
+export type TAsyncMapLineCallback = (
   line: string,
   lineNumber: number
 ) => Promise<string | null>;
@@ -61,7 +61,7 @@ const _createOutputWriter = (
 };
 
 export const createMapLineMachine = (
-  callback: TMapLineCallback | TAsyncMapLineFn,
+  callback: TMapLineCallback | TAsyncMapLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileStreamContext> => {
   const proc: TStreamProcessor<TFileStreamContext> = async (
@@ -75,14 +75,13 @@ export const createMapLineMachine = (
     };
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
     const r = input.pipe(transformToLines);
-    context.linesRead = 0;
     const writeOutput = _createOutputWriter(output, finalOptions);
     try {
       for await (const line of r) {
         context.linesRead++;
         let lineResult: string | null;
         if (finalOptions.useAsyncFn) {
-          lineResult = await (callback as TAsyncMapLineFn).call(
+          lineResult = await (callback as TAsyncMapLineCallback).call(
             finalOptions.thisArg,
             line,
             context.linesRead
