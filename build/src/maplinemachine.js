@@ -20,7 +20,6 @@ const createMapLineMachine = (callback, options) => {
         };
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
-        context.linesRead = 0;
         let notNullAlreadyRead = false;
         try {
             for await (const line of r) {
