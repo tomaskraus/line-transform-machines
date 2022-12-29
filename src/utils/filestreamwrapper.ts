@@ -8,14 +8,6 @@ import * as fsp from 'node:fs/promises';
 export type TFileStreamContext = {
   inputFileName?: string;
   outputFileName?: string;
-  linesRead: number;
-};
-
-export const getContextInfoStr = (context: TFileStreamContext): string => {
-  if (context.inputFileName) {
-    return `[${context.inputFileName}:${context.linesRead}]`;
-  }
-  return `line [${context.linesRead}]`;
 };
 
 export type TStreamProcessor<TResult> = (
@@ -73,7 +65,7 @@ export const fileStreamWrapper = <TResult>(
         }
       };
 
-      const context: TFileStreamContext = {linesRead: 0};
+      const context: TFileStreamContext = {};
       if (typeof outputFileNameOrStream === 'string') {
         fsp
           .open(outputFileNameOrStream, 'w')

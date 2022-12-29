@@ -61,21 +61,21 @@ describe('transform', () => {
     test('line numbers', async () => {
         const lnMachine = (0, maplinemachine_1.createMapLineMachine)(lineNumberFn);
         const res = await lnMachine(input, output);
-        expect(res.linesRead).toEqual(2);
+        expect(res.lineNumber).toEqual(2);
         expect(output.toString()).toEqual('1: Hello, \n2: World!');
     });
     test('outputs less lines if fn returns null', async () => {
         const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);
         const lnMachine = (0, maplinemachine_1.createMapLineMachine)(noDollyFn);
         const res = await lnMachine(inputWithDolly, output);
-        expect(res.linesRead).toEqual(4); //line read count remains the same
+        expect(res.lineNumber).toEqual(4); //line read count remains the same
         expect(output.toString()).toEqual('hello\n nwelcome \n');
     });
     test('outputs more lines if fn returns a string with newLine(s)', async () => {
         const nlFn = (line) => `-\n${line}`;
         const lnMachine = (0, maplinemachine_1.createMapLineMachine)(nlFn);
         const res = await lnMachine(input, output);
-        expect(res.linesRead).toEqual(2); //line read count remains the same
+        expect(res.lineNumber).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
     });
     test('transfers this in Fn', async () => {
@@ -91,7 +91,7 @@ describe('transform', () => {
         // same as:
         // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
         const res = await lnMachine(input, output);
-        expect(res.linesRead).toEqual(2); //line read count remains the same
+        expect(res.lineNumber).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('Hello, ');
     });
 });

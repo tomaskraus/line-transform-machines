@@ -26,15 +26,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fileStreamWrapper = exports.getContextInfoStr = void 0;
+exports.fileStreamWrapper = void 0;
 const fsp = __importStar(require("node:fs/promises"));
-const getContextInfoStr = (context) => {
-    if (context.inputFileName) {
-        return `[${context.inputFileName}:${context.linesRead}]`;
-    }
-    return `line [${context.linesRead}]`;
-};
-exports.getContextInfoStr = getContextInfoStr;
 const fileStreamWrapper = (proc) => {
     return (inputFileNameOrStream, outputFileNameOrStream
     // options?: TOptions
@@ -64,7 +57,7 @@ const fileStreamWrapper = (proc) => {
                     continueWithInStreamReady(inputFileNameOrStream, outStream, context);
                 }
             };
-            const context = { linesRead: 0 };
+            const context = {};
             if (typeof outputFileNameOrStream === 'string') {
                 fsp
                     .open(outputFileNameOrStream, 'w')

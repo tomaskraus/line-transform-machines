@@ -42,7 +42,7 @@ describe('lines & EOLs', () => {
     const lnMachine = createMapLineMachine(copyFn);
 
     const res = await lnMachine(inputEmpty, output);
-    expect(res.linesRead).toEqual(0);
+    expect(res.lineNumber).toEqual(0);
     expect(output.toString()).toEqual('');
   });
 
@@ -51,7 +51,7 @@ describe('lines & EOLs', () => {
     const lnMachine = createMapLineMachine(copyFn);
 
     const res = await lnMachine(oneLine, output);
-    expect(res.linesRead).toEqual(1);
+    expect(res.lineNumber).toEqual(1);
     expect(output.toString()).toEqual('one line');
   });
 
@@ -62,7 +62,7 @@ describe('lines & EOLs', () => {
 
     const res = await lnMachine(oneEOL, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('\n');
   });
 
@@ -73,7 +73,7 @@ describe('lines & EOLs', () => {
 
     const res = await lnMachine(inputEmptyLines, output);
 
-    expect(res.linesRead).toEqual(3); //two EOLs means three lines
+    expect(res.lineNumber).toEqual(3); //two EOLs means three lines
     expect(output.toString()).toEqual('\n\n');
   });
 
@@ -84,7 +84,7 @@ describe('lines & EOLs', () => {
     const input = fs.createReadStream(`${PATH_PREFIX}/my-file.txt`);
     const res = await withoutEOLSMachine(input, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('Hello, World!');
   });
 
@@ -94,7 +94,7 @@ describe('lines & EOLs', () => {
 
     const res = await lnMachine(input, output);
 
-    expect(res.linesRead).toEqual(3);
+    expect(res.lineNumber).toEqual(3);
     expect(output.toString()).toEqual('Hello, \nWorld!\n');
   });
 
@@ -106,7 +106,7 @@ describe('lines & EOLs', () => {
 
     const res = await lnMachine(input, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('Hello, ');
   });
 
@@ -118,7 +118,7 @@ describe('lines & EOLs', () => {
 
     const res = await lnMachine(input, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('World!');
   });
 });

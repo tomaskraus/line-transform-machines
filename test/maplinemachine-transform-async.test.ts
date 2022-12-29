@@ -44,7 +44,7 @@ describe('transform - async', () => {
 
     const res = await lnMachine(input, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('(Hello, )(World!)');
   });
 
@@ -80,7 +80,7 @@ describe('transform - async', () => {
     // const lnMachine = mapLineMachine(asyncFnWithThis.bind({lineNum: 2}));
 
     const res = await lnMachine(input, output);
-    expect(res.linesRead).toEqual(2); //line read count remains the same
+    expect(res.lineNumber).toEqual(2); //line read count remains the same
     expect(output.toString()).toEqual('Hello, ');
   });
 });

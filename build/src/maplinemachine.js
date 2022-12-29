@@ -12,8 +12,14 @@ exports.DEFAULT_LTM_OPTIONS = {
     useAsyncFn: false,
     thisArg: this,
 };
+const getInfoStr = (context) => {
+    if (context.inputFileName) {
+        return `[${context.inputFileName}:${context.lineNumber}]`;
+    }
+    return `line [${context.lineNumber}]`;
+};
 const createMapLineMachine = (callback, options) => {
-    const proc = async (input, output, context) => {
+    const proc = async (input, output, fileContext) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
             ...options,
@@ -21,15 +27,19 @@ const createMapLineMachine = (callback, options) => {
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
         let notNullAlreadyRead = false;
+        const context = {
+            ...fileContext,
+            lineNumber: 0,
+        };
         try {
             for await (const line of r) {
-                context.linesRead++;
+                context.lineNumber++;
                 let lineResult;
                 if (finalOptions.useAsyncFn) {
-                    lineResult = await callback.call(finalOptions.thisArg, line, context.linesRead);
+                    lineResult = await callback.call(finalOptions.thisArg, line, context.lineNumber);
                 }
                 else {
-                    lineResult = callback.call(finalOptions.thisArg, line, context.linesRead);
+                    lineResult = callback.call(finalOptions.thisArg, line, context.lineNumber);
                 }
                 if (lineResult !== null &&
                     finalOptions.rememberEndOfLines &&
@@ -52,7 +62,7 @@ const createMapLineMachine = (callback, options) => {
             return Promise.resolve(context);
         }
         catch (err) {
-            err.message = `${(0, filestreamwrapper_1.getContextInfoStr)(context)}\n${err.message}`;
+            err.message = `${getInfoStr(context)}\n${err.message}`;
             return Promise.reject(err);
         }
     };
