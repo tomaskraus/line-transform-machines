@@ -6,7 +6,7 @@ import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
 import type {TLineMachineOptions, TFileLineContext} from './linemachine-common';
 import {
-  DEFAULT_LTM_OPTIONS,
+  DEFAULT_LINEMACHINE_OPTIONS,
   createOutputWriter,
   getLineContextInfo,
 } from './linemachine-common';
@@ -31,7 +31,7 @@ export const createMapLineMachine = (
     fileContext: TFileStreamContext
   ): Promise<TFileLineContext> => {
     const finalOptions = {
-      ...DEFAULT_LTM_OPTIONS,
+      ...DEFAULT_LINEMACHINE_OPTIONS,
       ...options,
     };
     const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});

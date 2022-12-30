@@ -11,7 +11,7 @@ const linemachine_common_1 = require("./linemachine-common");
 const createMapLineMachineRxjs = (observableDecorator, options) => {
     const proc = async (input, output, fileContext) => {
         const finalOptions = {
-            ...linemachine_common_1.DEFAULT_LTM_OPTIONS,
+            ...linemachine_common_1.DEFAULT_LINEMACHINE_OPTIONS,
             ...options,
         };
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });

@@ -3,9 +3,9 @@
  * common stuff for all lineMachines
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLineContextInfo = exports.createOutputWriter = exports.DEFAULT_LTM_OPTIONS = void 0;
+exports.getLineContextInfo = exports.createOutputWriter = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
 const events_1 = require("events");
-exports.DEFAULT_LTM_OPTIONS = {
+exports.DEFAULT_LINEMACHINE_OPTIONS = {
     rememberEndOfLines: true,
     useAsyncFn: false,
     thisArg: this,

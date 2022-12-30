@@ -17,6 +17,6 @@ export type TLineMachineOptions = {
     useAsyncFn: boolean;
     thisArg: any;
 };
-export declare const DEFAULT_LTM_OPTIONS: TLineMachineOptions;
+export declare const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions;
 export declare const createOutputWriter: (output: stream.Writable, options: TLineMachineOptions) => (line: string | null) => Promise<void>;
 export declare const getLineContextInfo: (context: TFileLineContext) => string;

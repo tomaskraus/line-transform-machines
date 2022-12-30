@@ -21,7 +21,7 @@ export type TLineMachineOptions = {
   thisArg: any;
 };
 
-export const DEFAULT_LTM_OPTIONS: TLineMachineOptions = {
+export const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions = {
   rememberEndOfLines: true,
   useAsyncFn: false,
   thisArg: this,
