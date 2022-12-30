@@ -1,4 +1,4 @@
-import {createMapLineMachineRxjs} from '../src/maplinemachine';
+import {createMapLineMachineRxjs} from '../src/maplinemachine-rxjs';
 import {stdout} from 'node:process';
 import {map, filter, reduce, Observable} from 'rxjs';
 

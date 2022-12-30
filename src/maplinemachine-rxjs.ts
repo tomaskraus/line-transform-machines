@@ -1,6 +1,7 @@
 import stream from 'stream';
 import ReadlineTransform from 'readline-transform';
 import {fileStreamWrapper} from './utils/filestreamwrapper';
+import {Observable, from, tap} from 'rxjs';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
 import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
@@ -11,18 +12,8 @@ import {
   getLineContextInfo,
 } from './linemachine-common';
 
-export type TMapLineCallback = (
-  line: string,
-  lineNumber: number
-) => string | null;
-
-export type TAsyncMapLineCallback = (
-  line: string,
-  lineNumber: number
-) => Promise<string | null>;
-
-export const createMapLineMachine = (
-  callback: TMapLineCallback | TAsyncMapLineCallback,
+export const createMapLineMachineRxjs = (
+  observableDecorator: (obs: Observable<string>) => Observable<string>,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
   const proc: TStreamProcessor<TFileLineContext> = async (
@@ -41,32 +32,22 @@ export const createMapLineMachine = (
       ...fileContext,
       lineNumber: 0,
     };
-    try {
-      for await (const line of r) {
-        context.lineNumber++;
-        let lineResult: string | null;
-        if (finalOptions.useAsyncFn) {
-          lineResult = await (callback as TAsyncMapLineCallback).call(
-            finalOptions.thisArg,
-            line,
-            context.lineNumber
-          );
-        } else {
-          lineResult = (callback as TMapLineCallback).call(
-            finalOptions.thisArg,
-            line,
-            context.lineNumber
-          );
-        }
-        await writeOutput(lineResult);
-      }
-      return Promise.resolve(context);
-    } catch (err) {
-      (err as Error).message = `${getLineContextInfo(context)}\n${
-        (err as Error).message
-      }`;
-      return Promise.reject(err);
-    }
+    const initialObservable: Observable<string> = from(r).pipe(
+      tap(() => context.lineNumber++)
+    );
+
+    return new Promise((reject, resolve) =>
+      observableDecorator(initialObservable).subscribe({
+        next: writeOutput,
+        error: err => {
+          (err as Error).message = `${getLineContextInfo(context)}\n${
+            (err as Error).message
+          }`;
+          reject(err);
+        },
+        complete: () => resolve(context),
+      })
+    );
   };
 
   return fileStreamWrapper<TFileLineContext>(proc);

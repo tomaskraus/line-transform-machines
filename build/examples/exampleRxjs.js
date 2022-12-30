@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const maplinemachine_1 = require("../src/maplinemachine");
+const maplinemachine_rxjs_1 = require("../src/maplinemachine-rxjs");
 const node_process_1 = require("node:process");
 const rxjs_1 = require("rxjs");
 // const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {
@@ -17,7 +17,7 @@ const deco = (obs) => {
         return `${i}: ${v}`;
     }), (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
 };
-const lineMachine = (0, maplinemachine_1.createMapLineMachineRxjs)(deco);
+const lineMachine = (0, maplinemachine_rxjs_1.createMapLineMachineRxjs)(deco);
 const runner = () => {
     const prom = lineMachine('./examples/input.txt', node_process_1.stdout);
     prom
