@@ -49,7 +49,7 @@ describe('transform', () => {
 
     const res = await lnMachine(input, output);
 
-    expect(res.linesRead).toEqual(2);
+    expect(res.lineNumber).toEqual(2);
     expect(output.toString()).toEqual('1: Hello, \n2: World!');
   });
 
@@ -60,7 +60,7 @@ describe('transform', () => {
 
     const res = await lnMachine(inputWithDolly, output);
 
-    expect(res.linesRead).toEqual(4); //line read count remains the same
+    expect(res.lineNumber).toEqual(4); //line read count remains the same
     expect(output.toString()).toEqual('hello\n nwelcome \n');
   });
 
@@ -70,7 +70,7 @@ describe('transform', () => {
     const lnMachine = createMapLineMachine(nlFn);
 
     const res = await lnMachine(input, output);
-    expect(res.linesRead).toEqual(2); //line read count remains the same
+    expect(res.lineNumber).toEqual(2); //line read count remains the same
     expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
   });
 
@@ -89,7 +89,7 @@ describe('transform', () => {
     // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
 
     const res = await lnMachine(input, output);
-    expect(res.linesRead).toEqual(2); //line read count remains the same
+    expect(res.lineNumber).toEqual(2); //line read count remains the same
     expect(output.toString()).toEqual('Hello, ');
   });
 });

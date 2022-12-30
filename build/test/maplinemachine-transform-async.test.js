@@ -61,7 +61,7 @@ describe('transform - async', () => {
             rememberEndOfLines: false,
         });
         const res = await lnMachine(input, output);
-        expect(res.linesRead).toEqual(2);
+        expect(res.lineNumber).toEqual(2);
         expect(output.toString()).toEqual('(Hello, )(World!)');
     });
     test('transfers Fn Error - async', async () => {
@@ -89,7 +89,7 @@ describe('transform - async', () => {
         // same as:
         // const lnMachine = mapLineMachine(asyncFnWithThis.bind({lineNum: 2}));
         const res = await lnMachine(input, output);
-        expect(res.linesRead).toEqual(2); //line read count remains the same
+        expect(res.lineNumber).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('Hello, ');
     });
 });

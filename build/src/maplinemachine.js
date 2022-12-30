@@ -34,8 +34,14 @@ const _createOutputWriter = (output, options) => {
     };
     return outputWriter;
 };
+const getInfoStr = (context) => {
+    if (context.inputFileName) {
+        return `[${context.inputFileName}:${context.lineNumber}]`;
+    }
+    return `line [${context.lineNumber}]`;
+};
 const createMapLineMachine = (callback, options) => {
-    const proc = async (input, output, context) => {
+    const proc = async (input, output, fileContext) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
             ...options,
@@ -43,22 +49,26 @@ const createMapLineMachine = (callback, options) => {
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
         const writeOutput = _createOutputWriter(output, finalOptions);
+        const context = {
+            ...fileContext,
+            lineNumber: 0,
+        };
         try {
             for await (const line of r) {
-                context.linesRead++;
+                context.lineNumber++;
                 let lineResult;
                 if (finalOptions.useAsyncFn) {
-                    lineResult = await callback.call(finalOptions.thisArg, line, context.linesRead);
+                    lineResult = await callback.call(finalOptions.thisArg, line, context.lineNumber);
                 }
                 else {
-                    lineResult = callback.call(finalOptions.thisArg, line, context.linesRead);
+                    lineResult = callback.call(finalOptions.thisArg, line, context.lineNumber);
                 }
                 await writeOutput(lineResult);
             }
             return Promise.resolve(context);
         }
         catch (err) {
-            err.message = `${(0, filestreamwrapper_1.getContextInfoStr)(context)}\n${err.message}`;
+            err.message = `${getInfoStr(context)}\n${err.message}`;
             return Promise.reject(err);
         }
     };
@@ -66,7 +76,7 @@ const createMapLineMachine = (callback, options) => {
 };
 exports.createMapLineMachine = createMapLineMachine;
 const createMapLineMachineRxjs = (observableDecorator, options) => {
-    const proc = async (input, output, context) => {
+    const proc = async (input, output, fileContext) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
             ...options,
@@ -74,11 +84,15 @@ const createMapLineMachineRxjs = (observableDecorator, options) => {
         const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
         const r = input.pipe(transformToLines);
         const writeOutput = _createOutputWriter(output, finalOptions);
-        const initialObservable = (0, rxjs_1.from)(r).pipe((0, rxjs_1.tap)(() => context.linesRead++));
+        const context = {
+            ...fileContext,
+            lineNumber: 0,
+        };
+        const initialObservable = (0, rxjs_1.from)(r).pipe((0, rxjs_1.tap)(() => context.lineNumber++));
         return new Promise((reject, resolve) => observableDecorator(initialObservable).subscribe({
             next: writeOutput,
             error: err => {
-                err.message = `${(0, filestreamwrapper_1.getContextInfoStr)(context)}\n${err.message}`;
+                err.message = `${getInfoStr(context)}\n${err.message}`;
                 reject(err);
             },
             complete: () => resolve(context),
