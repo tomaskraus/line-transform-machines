@@ -13,6 +13,7 @@ const runner = async () => {
   try {
     const stats = await lineMachine('./examples/input.txt', stdout);
     console.log('\nstats:', stats);
+    console.log('after a lineMachine call');
   } catch (err) {
     console.error(err);
   }
