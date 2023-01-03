@@ -1,4 +1,4 @@
-import {createLineMachine} from '../src/linemachine';
+import {createLineMachine} from '../src/line_machine';
 
 // our callback that can throw error
 const normalizeNumbers = (s: string) => {

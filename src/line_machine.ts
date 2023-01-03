@@ -1,9 +1,12 @@
 import stream from 'stream';
 import ReadlineTransform from 'readline-transform';
 import {once} from 'events';
-import {fileStreamWrapper} from './utils/filestreamwrapper';
-import type {TFileStreamContext} from './utils/filestreamwrapper';
-import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
+import {fileStreamWrapper} from './utils/file_stream_wrapper';
+import type {TFileStreamContext} from './utils/file_stream_wrapper';
+import type {
+  TStreamProcessor,
+  TFileProcessor,
+} from './utils/file_stream_wrapper';
 
 export type TFileLineContext = TFileStreamContext & {lineNumber: number};
 

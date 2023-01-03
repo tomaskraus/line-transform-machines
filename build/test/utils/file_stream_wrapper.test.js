@@ -27,7 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mock_fs_1 = __importDefault(require("mock-fs"));
-const filestreamwrapper_1 = require("../../src/utils/filestreamwrapper");
+const file_stream_wrapper_1 = require("../../src/utils/file_stream_wrapper");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
 const copyStreamProcessor = (input, output, context) => {
@@ -37,7 +37,7 @@ const copyStreamProcessor = (input, output, context) => {
         input.on('error', err => reject(err));
     });
 };
-const copyProcessor = (0, filestreamwrapper_1.fileStreamWrapper)(copyStreamProcessor);
+const copyProcessor = (0, file_stream_wrapper_1.fileStreamWrapper)(copyStreamProcessor);
 beforeEach(() => {
     (0, mock_fs_1.default)({
         'my-dir': {
@@ -95,4 +95,4 @@ describe('input file', () => {
         expect(buff.toString()).toEqual('Hello, \nWorld!');
     });
 });
-//# sourceMappingURL=filestreamwrapper.test.js.map
+//# sourceMappingURL=file_stream_wrapper.test.js.map

@@ -1,4 +1,4 @@
-import {createLineMachine} from '../src/linemachine';
+import {createLineMachine} from '../src/line_machine';
 import {stdout} from 'node:process';
 
 const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {

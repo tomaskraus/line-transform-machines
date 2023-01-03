@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
-import {createLineMachine} from '../src/linemachine';
-import type {TMapLineCallback} from '../src/linemachine';
+import {createLineMachine} from '../src/line_machine';
+import type {TMapLineCallback} from '../src/line_machine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';

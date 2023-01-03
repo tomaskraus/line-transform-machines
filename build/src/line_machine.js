@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createLineMachine = exports.DEFAULT_LTM_OPTIONS = void 0;
 const readline_transform_1 = __importDefault(require("readline-transform"));
 const events_1 = require("events");
-const filestreamwrapper_1 = require("./utils/filestreamwrapper");
+const file_stream_wrapper_1 = require("./utils/file_stream_wrapper");
 exports.DEFAULT_LTM_OPTIONS = {
     rememberEndOfLines: true,
     useAsyncFn: false,
@@ -66,7 +66,7 @@ const createLineMachine = (callback, options) => {
             return Promise.reject(err);
         }
     };
-    return (0, filestreamwrapper_1.fileStreamWrapper)(proc);
+    return (0, file_stream_wrapper_1.fileStreamWrapper)(proc);
 };
 exports.createLineMachine = createLineMachine;
-//# sourceMappingURL=linemachine.js.map
+//# sourceMappingURL=line_machine.js.map

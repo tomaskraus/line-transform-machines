@@ -1,5 +1,5 @@
-import type { TFileStreamContext } from './utils/filestreamwrapper';
-import type { TFileProcessor } from './utils/filestreamwrapper';
+import type { TFileStreamContext } from './utils/file_stream_wrapper';
+import type { TFileProcessor } from './utils/file_stream_wrapper';
 export type TFileLineContext = TFileStreamContext & {
     lineNumber: number;
 };

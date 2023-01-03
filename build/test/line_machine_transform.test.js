@@ -27,7 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mock_fs_1 = __importDefault(require("mock-fs"));
-const linemachine_1 = require("../src/linemachine");
+const line_machine_1 = require("../src/line_machine");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
 let input;
@@ -59,21 +59,21 @@ describe('transform', () => {
         return line;
     };
     test('line numbers', async () => {
-        const lnMachine = (0, linemachine_1.createLineMachine)(lineNumberFn);
+        const lnMachine = (0, line_machine_1.createLineMachine)(lineNumberFn);
         const res = await lnMachine(input, output);
         expect(res.lineNumber).toEqual(2);
         expect(output.toString()).toEqual('1: Hello, \n2: World!');
     });
     test('outputs less lines if fn returns null', async () => {
         const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);
-        const lnMachine = (0, linemachine_1.createLineMachine)(noDollyFn);
+        const lnMachine = (0, line_machine_1.createLineMachine)(noDollyFn);
         const res = await lnMachine(inputWithDolly, output);
         expect(res.lineNumber).toEqual(4); //line read count remains the same
         expect(output.toString()).toEqual('hello\n nwelcome \n');
     });
     test('outputs more lines if fn returns a string with newLine(s)', async () => {
         const nlFn = (line) => `-\n${line}`;
-        const lnMachine = (0, linemachine_1.createLineMachine)(nlFn);
+        const lnMachine = (0, line_machine_1.createLineMachine)(nlFn);
         const res = await lnMachine(input, output);
         expect(res.lineNumber).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
@@ -85,7 +85,7 @@ describe('transform', () => {
             }
             return line;
         }
-        const lnMachine = (0, linemachine_1.createLineMachine)(fnWithThis, {
+        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithThis, {
             thisArg: { lineNum: 2 },
         });
         // same as:
@@ -104,16 +104,16 @@ describe('transform - error handling', () => {
         return `-\n${line}`;
     };
     test('transfers Fn Error - include error message', async () => {
-        const lnMachine = (0, linemachine_1.createLineMachine)(fnWithErr);
+        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
     });
     test('transfers Fn Error - include input stream line info', async () => {
-        const lnMachine = (0, linemachine_1.createLineMachine)(fnWithErr);
+        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
     });
     test('transfers Fn Error - include file & line info', async () => {
-        const lnMachine = (0, linemachine_1.createLineMachine)(fnWithErr);
+        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
         await expect(lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)).rejects.toThrow('/dolly-text.txt:2');
     });
 });
-//# sourceMappingURL=linemachine-transform.test.js.map
+//# sourceMappingURL=line_machine_transform.test.js.map

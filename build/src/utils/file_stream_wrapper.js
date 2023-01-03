@@ -74,4 +74,4 @@ const fileStreamWrapper = (proc) => {
     };
 };
 exports.fileStreamWrapper = fileStreamWrapper;
-//# sourceMappingURL=filestreamwrapper.js.map
+//# sourceMappingURL=file_stream_wrapper.js.map
