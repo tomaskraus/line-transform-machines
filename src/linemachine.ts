@@ -42,7 +42,7 @@ const getInfoStr = (context: TFileLineContext): string => {
   return `line [${context.lineNumber}]`;
 };
 
-export const createMapLineMachine = (
+export const createLineMachine = (
   callback: TMapLineCallback | TAsyncMapLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {

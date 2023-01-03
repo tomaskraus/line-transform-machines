@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createMapLineMachine = exports.DEFAULT_LTM_OPTIONS = void 0;
+exports.createLineMachine = exports.DEFAULT_LTM_OPTIONS = void 0;
 const readline_transform_1 = __importDefault(require("readline-transform"));
 const events_1 = require("events");
 const filestreamwrapper_1 = require("./utils/filestreamwrapper");
@@ -18,7 +18,7 @@ const getInfoStr = (context) => {
     }
     return `line [${context.lineNumber}]`;
 };
-const createMapLineMachine = (callback, options) => {
+const createLineMachine = (callback, options) => {
     const proc = async (input, output, fileContext) => {
         const finalOptions = {
             ...exports.DEFAULT_LTM_OPTIONS,
@@ -68,5 +68,5 @@ const createMapLineMachine = (callback, options) => {
     };
     return (0, filestreamwrapper_1.fileStreamWrapper)(proc);
 };
-exports.createMapLineMachine = createMapLineMachine;
-//# sourceMappingURL=maplinemachine.js.map
+exports.createLineMachine = createLineMachine;
+//# sourceMappingURL=linemachine.js.map

@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
-import {createMapLineMachine} from '../src/maplinemachine';
-import type {TMapLineCallback} from '../src/maplinemachine';
+import {createLineMachine} from '../src/linemachine';
+import type {TMapLineCallback} from '../src/linemachine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -45,7 +45,7 @@ describe('transform', () => {
   };
 
   test('line numbers', async () => {
-    const lnMachine = createMapLineMachine(lineNumberFn);
+    const lnMachine = createLineMachine(lineNumberFn);
 
     const res = await lnMachine(input, output);
 
@@ -56,7 +56,7 @@ describe('transform', () => {
   test('outputs less lines if fn returns null', async () => {
     const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);
 
-    const lnMachine = createMapLineMachine(noDollyFn);
+    const lnMachine = createLineMachine(noDollyFn);
 
     const res = await lnMachine(inputWithDolly, output);
 
@@ -67,7 +67,7 @@ describe('transform', () => {
   test('outputs more lines if fn returns a string with newLine(s)', async () => {
     const nlFn: TMapLineCallback = (line: string) => `-\n${line}`;
 
-    const lnMachine = createMapLineMachine(nlFn);
+    const lnMachine = createLineMachine(nlFn);
 
     const res = await lnMachine(input, output);
     expect(res.lineNumber).toEqual(2); //line read count remains the same
@@ -82,7 +82,7 @@ describe('transform', () => {
       return line;
     }
 
-    const lnMachine = createMapLineMachine(fnWithThis, {
+    const lnMachine = createLineMachine(fnWithThis, {
       thisArg: {lineNum: 2},
     });
     // same as:
@@ -104,17 +104,17 @@ describe('transform - error handling', () => {
   };
 
   test('transfers Fn Error - include error message', async () => {
-    const lnMachine = createMapLineMachine(fnWithErr);
+    const lnMachine = createLineMachine(fnWithErr);
     await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
   });
 
   test('transfers Fn Error - include input stream line info', async () => {
-    const lnMachine = createMapLineMachine(fnWithErr);
+    const lnMachine = createLineMachine(fnWithErr);
     await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
   });
 
   test('transfers Fn Error - include file & line info', async () => {
-    const lnMachine = createMapLineMachine(fnWithErr);
+    const lnMachine = createLineMachine(fnWithErr);
     await expect(
       lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)
     ).rejects.toThrow('/dolly-text.txt:2');
