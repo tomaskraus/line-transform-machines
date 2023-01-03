@@ -62,23 +62,4 @@ describe('transform - async', () => {
     const lnMachine = createAsyncLineMachine(asyncfnWithErr);
     await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
   });
-
-  test('transfers this in Fn - async', async () => {
-    async function asyncFnWithThis(line: string, lineNumber: number) {
-      if (lineNumber === this?.lineNum) {
-        return null;
-      }
-      return line;
-    }
-
-    const lnMachine = createAsyncLineMachine(asyncFnWithThis, {
-      thisArg: {lineNum: 2},
-    });
-    // same as:
-    // const lnMachine = mapLineMachine(asyncFnWithThis.bind({lineNum: 2}));
-
-    const res = await lnMachine(input, output);
-    expect(res.lineNumber).toEqual(2); //line read count remains the same
-    expect(output.toString()).toEqual('Hello, ');
-  });
 });

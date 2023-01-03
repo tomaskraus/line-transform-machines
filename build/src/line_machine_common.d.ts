@@ -15,7 +15,6 @@ export type TLineMachineOptions = {
      * remembers...
      */
     rememberEndOfLines: boolean;
-    thisArg: any;
 };
 export declare const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions;
 export type TLineStreamCallback = (lineStream: ReadlineTransform, writeOutput: (line: string | null) => Promise<void>, fileLineContext: TFileLineContext, options: TLineMachineOptions) => Promise<TFileLineContext>;

@@ -23,12 +23,10 @@ export type TLineMachineOptions = {
    * remembers...
    */
   rememberEndOfLines: boolean;
-  thisArg: any;
 };
 
 export const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions = {
   rememberEndOfLines: true,
-  thisArg: this,
 };
 
 const createOutputWriter = (

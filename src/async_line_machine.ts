@@ -21,17 +21,12 @@ export const createAsyncLineMachine = (
   const lineStreamCallback: TLineStreamCallback = async (
     lineStream,
     writeOutput,
-    context,
-    opts
+    context //, opts
   ): Promise<TFileLineContext> => {
     try {
       for await (const line of lineStream) {
         context.lineNumber++;
-        const lineResult = await callback.call(
-          opts.thisArg,
-          line,
-          context.lineNumber
-        );
+        const lineResult = await callback(line, context.lineNumber);
         await writeOutput(lineResult);
       }
       return Promise.resolve(context);

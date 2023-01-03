@@ -12,7 +12,6 @@ const readline_transform_1 = __importDefault(require("readline-transform"));
 const file_stream_wrapper_1 = require("./utils/file_stream_wrapper");
 exports.DEFAULT_LINEMACHINE_OPTIONS = {
     rememberEndOfLines: true,
-    thisArg: this,
 };
 const createOutputWriter = (output, options) => {
     let notNullAlreadyRead = false;

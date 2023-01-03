@@ -78,22 +78,6 @@ describe('transform', () => {
         expect(res.lineNumber).toEqual(2); //line read count remains the same
         expect(output.toString()).toEqual('-\nHello, \n-\nWorld!');
     });
-    test('transfers this in Fn', async () => {
-        function fnWithThis(line, lineNumber) {
-            if (lineNumber === (this === null || this === void 0 ? void 0 : this.lineNum)) {
-                return null;
-            }
-            return line;
-        }
-        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithThis, {
-            thisArg: { lineNum: 2 },
-        });
-        // same as:
-        // const lnMachine = mapLineMachine(fnWithThis.bind({lineNum: 2}));
-        const res = await lnMachine(input, output);
-        expect(res.lineNumber).toEqual(2); //line read count remains the same
-        expect(output.toString()).toEqual('Hello, ');
-    });
 });
 describe('transform - error handling', () => {
     const fnWithErr = (line, lineNumber) => {
