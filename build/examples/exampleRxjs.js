@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const rxjs_line_machine_1 = require("../src/rxjs-line-machine");
+const rxjs_line_machine_1 = require("../src/rxjs_line_machine");
 const node_process_1 = require("node:process");
 const rxjs_1 = require("rxjs");
 const nonEmptyLinesCount = (obs) => {
@@ -13,7 +13,7 @@ const nonEmptyLinesCount = (obs) => {
     // }),
     (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
 };
-const lineMachine = (0, rxjs_line_machine_1.createRxJSLineMachine)(nonEmptyLinesCount);
+const lineMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(nonEmptyLinesCount);
 const runner = () => {
     const prom = lineMachine('./examples/input.txt', node_process_1.stdout);
     prom

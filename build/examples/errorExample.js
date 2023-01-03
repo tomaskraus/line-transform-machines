@@ -18,4 +18,4 @@ const runner = async () => {
     }
 };
 runner();
-//# sourceMappingURL=error-example.js.map
+//# sourceMappingURL=errorExample.js.map

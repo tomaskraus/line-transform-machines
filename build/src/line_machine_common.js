@@ -67,4 +67,4 @@ const addLineInfoToErrorObj = (context) => (err) => {
     return err;
 };
 exports.addLineInfoToErrorObj = addLineInfoToErrorObj;
-//# sourceMappingURL=linemachine-common.js.map
+//# sourceMappingURL=line_machine_common.js.map

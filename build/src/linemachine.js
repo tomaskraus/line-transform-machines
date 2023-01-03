@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createLineMachine = void 0;
-const linemachine_common_1 = require("./linemachine-common");
+const line_machine_common_1 = require("./line_machine_common");
 const createLineMachine = (callback, options) => {
     const lineStreamCallback = async (lineStream, writeOutput, context, opts) => {
         try {
@@ -19,10 +19,10 @@ const createLineMachine = (callback, options) => {
             return Promise.resolve(context);
         }
         catch (err) {
-            return Promise.reject((0, linemachine_common_1.addLineInfoToErrorObj)(context)(err));
+            return Promise.reject((0, line_machine_common_1.addLineInfoToErrorObj)(context)(err));
         }
     };
-    return (0, linemachine_common_1.fileLineProcessorWrapper)(lineStreamCallback, options);
+    return (0, line_machine_common_1.fileLineProcessorWrapper)(lineStreamCallback, options);
 };
 exports.createLineMachine = createLineMachine;
 //# sourceMappingURL=linemachine.js.map

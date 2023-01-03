@@ -1,4 +1,4 @@
-import {createRxJSLineMachine} from '../src/rxjs-line-machine';
+import {createRxjsLineMachine} from '../src/rxjs_line_machine';
 import {stdout} from 'node:process';
 import {map, filter, reduce, Observable} from 'rxjs';
 
@@ -16,7 +16,7 @@ const nonEmptyLinesCount = (obs: Observable<string>) => {
   );
 };
 
-const lineMachine = createRxJSLineMachine(nonEmptyLinesCount);
+const lineMachine = createRxjsLineMachine(nonEmptyLinesCount);
 
 const runner = () => {
   const prom = lineMachine('./examples/input.txt', stdout);

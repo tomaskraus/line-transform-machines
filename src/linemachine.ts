@@ -1,13 +1,13 @@
 import {
   addLineInfoToErrorObj,
   fileLineProcessorWrapper,
-} from './linemachine-common';
+} from './line_machine_common';
 import type {TFileProcessor} from './utils/filestreamwrapper';
 import type {
   TLineMachineOptions,
   TFileLineContext,
   TLineStreamCallback,
-} from './linemachine-common';
+} from './line_machine_common';
 
 export type TMapLineCallback = (
   line: string,

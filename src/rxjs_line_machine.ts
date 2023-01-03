@@ -3,15 +3,15 @@ import {Observable, from, tap} from 'rxjs';
 import {
   addLineInfoToErrorObj,
   fileLineProcessorWrapper,
-} from './linemachine-common';
+} from './line_machine_common';
 import type {TFileProcessor} from './utils/filestreamwrapper';
 import type {
   TLineMachineOptions,
   TFileLineContext,
   TLineStreamCallback,
-} from './linemachine-common';
+} from './line_machine_common';
 
-export const createRxJSLineMachine = (
+export const createRxjsLineMachine = (
   observableDecorator: (obs: Observable<string>) => Observable<string>,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
