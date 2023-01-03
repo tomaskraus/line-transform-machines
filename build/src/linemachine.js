@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createMapLineMachine = void 0;
+exports.createLineMachine = void 0;
 const linemachine_common_1 = require("./linemachine-common");
-const createMapLineMachine = (callback, options) => {
+const createLineMachine = (callback, options) => {
     const lineStreamCallback = async (lineStream, writeOutput, context, opts) => {
         try {
             for await (const line of lineStream) {
@@ -24,5 +24,5 @@ const createMapLineMachine = (callback, options) => {
     };
     return (0, linemachine_common_1.fileLineProcessorWrapper)(lineStreamCallback, options);
 };
-exports.createMapLineMachine = createMapLineMachine;
-//# sourceMappingURL=maplinemachine.js.map
+exports.createLineMachine = createLineMachine;
+//# sourceMappingURL=linemachine.js.map

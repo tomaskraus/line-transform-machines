@@ -1,4 +1,4 @@
-import {createMapLineMachine} from '../src/maplinemachine';
+import {createLineMachine} from '../src/linemachine';
 
 // our callback that can throw error
 const normalizeNumbers = (s: string) => {
@@ -6,7 +6,7 @@ const normalizeNumbers = (s: string) => {
   if (isNaN(num)) throw new Error(`Not a number: ${s}`);
   return num.toString();
 };
-const lineMachine = createMapLineMachine(normalizeNumbers);
+const lineMachine = createLineMachine(normalizeNumbers);
 
 const runner = async () => {
   try {

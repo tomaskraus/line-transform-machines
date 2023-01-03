@@ -19,7 +19,7 @@ export type TAsyncMapLineCallback = (
   lineNumber: number
 ) => Promise<string | null>;
 
-export const createMapLineMachine = (
+export const createLineMachine = (
   callback: TMapLineCallback | TAsyncMapLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {

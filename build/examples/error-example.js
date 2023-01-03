@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const maplinemachine_1 = require("../src/maplinemachine");
+const linemachine_1 = require("../src/linemachine");
 // our callback that can throw error
 const normalizeNumbers = (s) => {
     const num = parseInt(s);
@@ -8,7 +8,7 @@ const normalizeNumbers = (s) => {
         throw new Error(`Not a number: ${s}`);
     return num.toString();
 };
-const lineMachine = (0, maplinemachine_1.createMapLineMachine)(normalizeNumbers);
+const lineMachine = (0, linemachine_1.createLineMachine)(normalizeNumbers);
 const runner = async () => {
     try {
         await lineMachine('./examples/nums.txt', './examples/normalized.txt');

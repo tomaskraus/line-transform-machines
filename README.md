@@ -9,7 +9,7 @@ Maps/filters input lines by calling a (sync/async) callback on them.
 #### Example 1: line add, delete & transform
 
 ```ts
-import {createMapLineMachine} from 'line-transform-machines';
+import {createLineMachine} from 'line-transform-machines';
 import {stdout} from 'node:process';
 
 // our callback
@@ -17,7 +17,7 @@ const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {
   if (s.trim().length === 0) return null; // returning null removes that line from output
   return `${lineNum}:\n    ${s.toUpperCase()}`; // can 'insert' new lines using newline characters in the string returned
 };
-const lineMachine = createMapLineMachine(toUpperIgnoreEmptyLinesNumbered);
+const lineMachine = createLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
 const runner = async () => {
   try {
@@ -74,7 +74,7 @@ stats: { linesRead: 14, inputFileName: './examples/input.txt' }
 #### Example 2: error handling
 
 ```ts
-import {createMapLineMachine} from 'line-transform-machines';
+import {createLineMachine} from 'line-transform-machines';
 
 // our callback that can throw error
 const normalizeNumbers = (s: string) => {
@@ -82,7 +82,7 @@ const normalizeNumbers = (s: string) => {
   if (isNaN(num)) throw new Error(`Not a number: ${s}`);
   return num.toString();
 };
-const lineMachine = createMapLineMachine(normalizeNumbers);
+const lineMachine = createLineMachine(normalizeNumbers);
 
 const runner = async () => {
   try {

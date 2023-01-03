@@ -1,4 +1,4 @@
-import {createMapLineMachine} from '../src/maplinemachine';
+import {createLineMachine} from '../src/linemachine';
 import {stdout} from 'node:process';
 
 const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {
@@ -7,7 +7,7 @@ const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {
   }
   return `${lineNumber}: ${s.toUpperCase()}`;
 };
-const lineMachine = createMapLineMachine(toUpperAndNonEmptyIndexed);
+const lineMachine = createLineMachine(toUpperAndNonEmptyIndexed);
 
 const runner = async () => {
   try {
