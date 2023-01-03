@@ -33,7 +33,7 @@ export const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions = {
   thisArg: this,
 };
 
-export const createOutputWriter = (
+const createOutputWriter = (
   output: stream.Writable,
   options: TLineMachineOptions
 ) => {
