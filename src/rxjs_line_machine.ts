@@ -16,9 +16,13 @@ export type TLineItem = {
   lineNumber: number;
 };
 
+export type TObservableDecorator = (
+  source: Observable<TLineItem>
+) => Observable<string>;
+
 export const createRxjsLineMachine = (
   observableDecorator: (
-    obs: Observable<{value: string; lineNumber: number}>
+    source: Observable<{value: string; lineNumber: number}>
   ) => Observable<string>,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
