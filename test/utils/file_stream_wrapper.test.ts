@@ -1,10 +1,10 @@
 import mock from 'mock-fs';
 
-import {fileStreamWrapper} from '../../src/utils/filestreamwrapper';
+import {fileStreamWrapper} from '../../src/utils/file_stream_wrapper';
 import type {
   TStreamProcessor,
   TFileStreamContext,
-} from '../../src/utils/filestreamwrapper';
+} from '../../src/utils/file_stream_wrapper';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
