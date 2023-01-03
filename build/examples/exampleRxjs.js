@@ -1,23 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const maplinemachine_rxjs_1 = require("../src/maplinemachine-rxjs");
+const rxjs_line_machine_1 = require("../src/rxjs-line-machine");
 const node_process_1 = require("node:process");
 const rxjs_1 = require("rxjs");
-// const toUpperAndNonEmptyIndexed = (s: string, lineNumber: number) => {
-//   if (s.trim().length === 0) {
-//     return null; // removes line from output
-//   }
-//   return `${lineNumber}: ${s.toUpperCase()}`;
-// };
-const deco = (obs) => {
-    return obs.pipe((0, rxjs_1.map)((v, i) => {
-        if (i === 3) {
-            throw new Error('i is 3!');
-        }
-        return `${i}: ${v}`;
-    }), (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
+const nonEmptyLinesCount = (obs) => {
+    return obs.pipe(
+    // map((v, i) => {
+    //   if (i === 3) {
+    //     throw new Error('i is 3!');
+    //   }
+    //   return `${i}: ${v}`;
+    // }),
+    (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
 };
-const lineMachine = (0, maplinemachine_rxjs_1.createMapLineMachineRxjs)(deco);
+const lineMachine = (0, rxjs_line_machine_1.createRxJSLineMachine)(nonEmptyLinesCount);
 const runner = () => {
     const prom = lineMachine('./examples/input.txt', node_process_1.stdout);
     prom

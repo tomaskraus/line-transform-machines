@@ -1,14 +1,12 @@
-import stream from 'stream';
-import ReadlineTransform from 'readline-transform';
-import {fileStreamWrapper} from './utils/filestreamwrapper';
-import type {TFileStreamContext} from './utils/filestreamwrapper';
-import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
-
-import type {TLineMachineOptions, TFileLineContext} from './linemachine-common';
 import {
-  DEFAULT_LINEMACHINE_OPTIONS,
-  createOutputWriter,
-  getLineContextInfo,
+  addLineInfoToErrorObj,
+  fileLineProcessorWrapper,
+} from './linemachine-common';
+import type {TFileProcessor} from './utils/filestreamwrapper';
+import type {
+  TLineMachineOptions,
+  TFileLineContext,
+  TLineStreamCallback,
 } from './linemachine-common';
 
 export type TMapLineCallback = (
@@ -25,35 +23,25 @@ export const createMapLineMachine = (
   callback: TMapLineCallback | TAsyncMapLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
-  const proc: TStreamProcessor<TFileLineContext> = async (
-    input: stream.Readable,
-    output: stream.Writable,
-    fileContext: TFileStreamContext
+  const lineStreamCallback: TLineStreamCallback = async (
+    lineStream,
+    writeOutput,
+    context,
+    opts
   ): Promise<TFileLineContext> => {
-    const finalOptions = {
-      ...DEFAULT_LINEMACHINE_OPTIONS,
-      ...options,
-    };
-    const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
-    const r = input.pipe(transformToLines);
-    const writeOutput = createOutputWriter(output, finalOptions);
-    const context: TFileLineContext = {
-      ...fileContext,
-      lineNumber: 0,
-    };
     try {
-      for await (const line of r) {
+      for await (const line of lineStream) {
         context.lineNumber++;
         let lineResult: string | null;
-        if (finalOptions.useAsyncFn) {
+        if (opts.useAsyncFn) {
           lineResult = await (callback as TAsyncMapLineCallback).call(
-            finalOptions.thisArg,
+            opts.thisArg,
             line,
             context.lineNumber
           );
         } else {
           lineResult = (callback as TMapLineCallback).call(
-            finalOptions.thisArg,
+            opts.thisArg,
             line,
             context.lineNumber
           );
@@ -62,12 +50,9 @@ export const createMapLineMachine = (
       }
       return Promise.resolve(context);
     } catch (err) {
-      (err as Error).message = `${getLineContextInfo(context)}\n${
-        (err as Error).message
-      }`;
-      return Promise.reject(err);
+      return Promise.reject(addLineInfoToErrorObj(context)(err as Error));
     }
   };
 
-  return fileStreamWrapper<TFileLineContext>(proc);
+  return fileLineProcessorWrapper(lineStreamCallback, options);
 };

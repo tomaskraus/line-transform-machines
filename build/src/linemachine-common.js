@@ -2,9 +2,14 @@
 /**
  * common stuff for all lineMachines
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLineContextInfo = exports.createOutputWriter = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
+exports.addLineInfoToErrorObj = exports.getLineContextInfo = exports.fileLineProcessorWrapper = exports.createOutputWriter = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
 const events_1 = require("events");
+const readline_transform_1 = __importDefault(require("readline-transform"));
+const filestreamwrapper_1 = require("./utils/filestreamwrapper");
 exports.DEFAULT_LINEMACHINE_OPTIONS = {
     rememberEndOfLines: true,
     useAsyncFn: false,
@@ -32,6 +37,24 @@ const createOutputWriter = (output, options) => {
     return outputWriter;
 };
 exports.createOutputWriter = createOutputWriter;
+const fileLineProcessorWrapper = (lineStreamCallback, options) => {
+    const streamProc = async (input, output, fileContext) => {
+        const finalOptions = {
+            ...exports.DEFAULT_LINEMACHINE_OPTIONS,
+            ...options,
+        };
+        const transformToLines = new readline_transform_1.default({ ignoreEndOfBreak: false });
+        const r = input.pipe(transformToLines);
+        const writeOutput = (0, exports.createOutputWriter)(output, finalOptions);
+        const context = {
+            ...fileContext,
+            lineNumber: 0,
+        };
+        return lineStreamCallback(r, writeOutput, context, finalOptions);
+    };
+    return (0, filestreamwrapper_1.fileStreamWrapper)(streamProc);
+};
+exports.fileLineProcessorWrapper = fileLineProcessorWrapper;
 const getLineContextInfo = (context) => {
     if (context.inputFileName) {
         return `[${context.inputFileName}:${context.lineNumber}]`;
@@ -39,4 +62,9 @@ const getLineContextInfo = (context) => {
     return `line [${context.lineNumber}]`;
 };
 exports.getLineContextInfo = getLineContextInfo;
+const addLineInfoToErrorObj = (context) => (err) => {
+    err.message = `${(0, exports.getLineContextInfo)(context)}\n${err.message}`;
+    return err;
+};
+exports.addLineInfoToErrorObj = addLineInfoToErrorObj;
 //# sourceMappingURL=linemachine-common.js.map

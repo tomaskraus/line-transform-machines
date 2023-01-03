@@ -3,9 +3,12 @@
  */
 
 import stream from 'stream';
-import {once} from 'events';
 
+import {once} from 'events';
+import ReadlineTransform from 'readline-transform';
+import {fileStreamWrapper} from './utils/filestreamwrapper';
 import type {TFileStreamContext} from './utils/filestreamwrapper';
+import type {TStreamProcessor, TFileProcessor} from './utils/filestreamwrapper';
 
 export type TFileLineContext = TFileStreamContext & {lineNumber: number};
 
@@ -53,9 +56,48 @@ export const createOutputWriter = (
   return outputWriter;
 };
 
+export type TLineStreamCallback = (
+  lineStream: ReadlineTransform,
+  writeOutput: (line: string | null) => Promise<void>,
+  fileLineContext: TFileLineContext,
+  finalOptions: TLineMachineOptions
+) => Promise<TFileLineContext>;
+
+export const fileLineProcessorWrapper = (
+  lineStreamCallback: TLineStreamCallback,
+  options?: Partial<TLineMachineOptions>
+): TFileProcessor<TFileLineContext> => {
+  const streamProc: TStreamProcessor<TFileLineContext> = async (
+    input: stream.Readable,
+    output: stream.Writable,
+    fileContext: TFileStreamContext
+  ): Promise<TFileLineContext> => {
+    const finalOptions: TLineMachineOptions = {
+      ...DEFAULT_LINEMACHINE_OPTIONS,
+      ...options,
+    };
+    const transformToLines = new ReadlineTransform({ignoreEndOfBreak: false});
+    const r = input.pipe(transformToLines);
+    const writeOutput = createOutputWriter(output, finalOptions);
+    const context: TFileLineContext = {
+      ...fileContext,
+      lineNumber: 0,
+    };
+    return lineStreamCallback(r, writeOutput, context, finalOptions);
+  };
+  return fileStreamWrapper<TFileLineContext>(streamProc);
+};
+
 export const getLineContextInfo = (context: TFileLineContext): string => {
   if (context.inputFileName) {
     return `[${context.inputFileName}:${context.lineNumber}]`;
   }
   return `line [${context.lineNumber}]`;
 };
+
+export const addLineInfoToErrorObj =
+  (context: TFileLineContext) =>
+  (err: Error): Error => {
+    err.message = `${getLineContextInfo(context)}\n${err.message}`;
+    return err;
+  };
