@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
-import {createLineMachine} from '../src/line_machine';
-import type {TAsyncMapLineCallback} from '../src/line_machine';
+import {createAsyncLineMachine} from '../src/async_line_machine';
+import type {TAsyncMapLineCallback} from '../src/async_line_machine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -37,8 +37,7 @@ describe('transform - async', () => {
           resolve(`(${line})`);
         }, 0);
       });
-    const lnMachine = createLineMachine(asyncFn, {
-      useAsyncFn: true,
+    const lnMachine = createAsyncLineMachine(asyncFn, {
       rememberEndOfLines: false,
     });
 
@@ -60,7 +59,7 @@ describe('transform - async', () => {
       return `-\n${line}`;
     };
 
-    const lnMachine = createLineMachine(asyncfnWithErr, {useAsyncFn: true});
+    const lnMachine = createAsyncLineMachine(asyncfnWithErr);
     await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
   });
 
@@ -72,9 +71,8 @@ describe('transform - async', () => {
       return line;
     }
 
-    const lnMachine = createLineMachine(asyncFnWithThis, {
+    const lnMachine = createAsyncLineMachine(asyncFnWithThis, {
       thisArg: {lineNum: 2},
-      useAsyncFn: true,
     });
     // same as:
     // const lnMachine = mapLineMachine(asyncFnWithThis.bind({lineNum: 2}));

@@ -27,7 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mock_fs_1 = __importDefault(require("mock-fs"));
-const line_machine_1 = require("../src/line_machine");
+const async_line_machine_1 = require("../src/async_line_machine");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
 beforeEach(() => {
@@ -56,8 +56,7 @@ describe('transform - async', () => {
                 resolve(`(${line})`);
             }, 0);
         });
-        const lnMachine = (0, line_machine_1.createLineMachine)(asyncFn, {
-            useAsyncFn: true,
+        const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(asyncFn, {
             rememberEndOfLines: false,
         });
         const res = await lnMachine(input, output);
@@ -72,7 +71,7 @@ describe('transform - async', () => {
             }
             return `-\n${line}`;
         };
-        const lnMachine = (0, line_machine_1.createLineMachine)(asyncfnWithErr, { useAsyncFn: true });
+        const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(asyncfnWithErr);
         await expect(lnMachine(input, output)).rejects.toThrow('line is 2!');
     });
     test('transfers this in Fn - async', async () => {
@@ -82,9 +81,8 @@ describe('transform - async', () => {
             }
             return line;
         }
-        const lnMachine = (0, line_machine_1.createLineMachine)(asyncFnWithThis, {
+        const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(asyncFnWithThis, {
             thisArg: { lineNum: 2 },
-            useAsyncFn: true,
         });
         // same as:
         // const lnMachine = mapLineMachine(asyncFnWithThis.bind({lineNum: 2}));

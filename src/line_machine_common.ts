@@ -23,13 +23,11 @@ export type TLineMachineOptions = {
    * remembers...
    */
   rememberEndOfLines: boolean;
-  useAsyncFn: boolean;
   thisArg: any;
 };
 
 export const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions = {
   rememberEndOfLines: true,
-  useAsyncFn: false,
   thisArg: this,
 };
 

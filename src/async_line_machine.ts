@@ -9,13 +9,13 @@ import type {
   TLineStreamCallback,
 } from './line_machine_common';
 
-export type TMapLineCallback = (
+export type TAsyncMapLineCallback = (
   line: string,
   lineNumber: number
-) => string | null;
+) => Promise<string | null>;
 
-export const createLineMachine = (
-  callback: TMapLineCallback,
+export const createAsyncLineMachine = (
+  callback: TAsyncMapLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
   const lineStreamCallback: TLineStreamCallback = async (
@@ -27,7 +27,7 @@ export const createLineMachine = (
     try {
       for await (const line of lineStream) {
         context.lineNumber++;
-        const lineResult = callback.call(
+        const lineResult = await callback.call(
           opts.thisArg,
           line,
           context.lineNumber
