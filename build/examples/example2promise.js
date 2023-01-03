@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const maplinemachine_1 = require("../src/maplinemachine");
+const linemachine_1 = require("../src/linemachine");
 const node_process_1 = require("node:process");
 const toUpperAndNonEmptyIndexed = (s, lineNumber) => {
     if (s.trim().length === 0) {
@@ -8,7 +8,7 @@ const toUpperAndNonEmptyIndexed = (s, lineNumber) => {
     }
     return `${lineNumber}: ${s.toUpperCase()}`;
 };
-const lineMachine = (0, maplinemachine_1.createMapLineMachine)(toUpperAndNonEmptyIndexed);
+const lineMachine = (0, linemachine_1.createLineMachine)(toUpperAndNonEmptyIndexed);
 const runner = () => {
     const prom = lineMachine('./examples/input.txt', node_process_1.stdout);
     prom
