@@ -21,7 +21,7 @@ export type TLineMachineOptions = {
 };
 export declare const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions;
 export declare const createOutputWriter: (output: stream.Writable, options: TLineMachineOptions) => (line: string | null) => Promise<void>;
-export type TLineStreamCallback = (lineStream: ReadlineTransform, writeOutput: (line: string | null) => Promise<void>, fileLineContext: TFileLineContext, finalOptions: TLineMachineOptions) => Promise<TFileLineContext>;
+export type TLineStreamCallback = (lineStream: ReadlineTransform, writeOutput: (line: string | null) => Promise<void>, fileLineContext: TFileLineContext, options: TLineMachineOptions) => Promise<TFileLineContext>;
 export declare const fileLineProcessorWrapper: (lineStreamCallback: TLineStreamCallback, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileLineContext>;
 export declare const getLineContextInfo: (context: TFileLineContext) => string;
 export declare const addLineInfoToErrorObj: (context: TFileLineContext) => (err: Error) => Error;

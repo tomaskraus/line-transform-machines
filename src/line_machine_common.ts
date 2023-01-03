@@ -63,7 +63,7 @@ export type TLineStreamCallback = (
   lineStream: ReadlineTransform,
   writeOutput: (line: string | null) => Promise<void>,
   fileLineContext: TFileLineContext,
-  finalOptions: TLineMachineOptions
+  options: TLineMachineOptions
 ) => Promise<TFileLineContext>;
 
 export const fileLineProcessorWrapper = (
