@@ -1,8 +1,9 @@
 import {createRxjsLineMachine} from '../src/rxjs_line_machine';
+import type {TLineItem} from '../src/rxjs_line_machine';
 import {stdout} from 'node:process';
 import {map, filter, reduce, Observable} from 'rxjs';
 
-const nonEmptyLinesCount = (obs: Observable<string>) => {
+const nonEmptyLinesCount = (obs: Observable<TLineItem>): Observable<string> => {
   return obs.pipe(
     // map((v, i) => {
     //   if (i === 3) {
@@ -10,6 +11,7 @@ const nonEmptyLinesCount = (obs: Observable<string>) => {
     //   }
     //   return `${i}: ${v}`;
     // }),
+    map(x => x.value),
     filter(v => v.trim().length > 0),
     reduce((count: number) => count + 1, 0),
     map(x => x.toString())

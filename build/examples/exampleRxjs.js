@@ -11,7 +11,7 @@ const nonEmptyLinesCount = (obs) => {
     //   }
     //   return `${i}: ${v}`;
     // }),
-    (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
+    (0, rxjs_1.map)(x => x.value), (0, rxjs_1.filter)(v => v.trim().length > 0), (0, rxjs_1.reduce)((count) => count + 1, 0), (0, rxjs_1.map)(x => x.toString()));
 };
 const lineMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(nonEmptyLinesCount);
 const runner = () => {

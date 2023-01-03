@@ -1,4 +1,4 @@
-import {Observable, from, tap} from 'rxjs';
+import {Observable, from, tap, map} from 'rxjs';
 
 import {
   addLineInfoToErrorObj,
@@ -11,8 +11,15 @@ import type {
   TLineStreamCallback,
 } from './line_machine_common';
 
+export type TLineItem = {
+  value: string;
+  lineNumber: number;
+};
+
 export const createRxjsLineMachine = (
-  observableDecorator: (obs: Observable<string>) => Observable<string>,
+  observableDecorator: (
+    obs: Observable<{value: string; lineNumber: number}>
+  ) => Observable<string>,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
   const lineStreamCallback: TLineStreamCallback = async (
@@ -20,8 +27,9 @@ export const createRxjsLineMachine = (
     writeOutput,
     context //, opts
   ): Promise<TFileLineContext> => {
-    const initialObservable: Observable<string> = from(lineStream).pipe(
-      tap(() => context.lineNumber++)
+    const initialObservable: Observable<TLineItem> = from(lineStream).pipe(
+      tap(() => context.lineNumber++),
+      map(s => ({value: s, lineNumber: context.lineNumber}))
     );
 
     return new Promise((resolve, reject) =>
