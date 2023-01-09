@@ -1,5 +1,5 @@
 import {createRxjsLineMachine} from '../src/rxjs_line_machine';
-import type {TLineItem, TObservableDecorator} from '../src/rxjs_line_machine';
+import type {TLineItem, TLineMachineDecorator} from '../src/rxjs_line_machine';
 import {stdout} from 'node:process';
 import {map, filter, concatMap, Observable} from 'rxjs';
 
@@ -9,7 +9,7 @@ const toUpperAsync = (s: string): Promise<string> => {
   );
 };
 
-const nonEmptyLinesToUpper: TObservableDecorator = (
+const nonEmptyLinesToUpper: TLineMachineDecorator = (
   source: Observable<TLineItem>
 ): Observable<string> => {
   return source.pipe(
