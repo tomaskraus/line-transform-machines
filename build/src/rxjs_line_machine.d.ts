@@ -5,7 +5,7 @@ export type TLineItem = {
     value: string;
     lineNumber: number;
 };
-export type TObservableDecorator = (source: Observable<TLineItem>) => Observable<string>;
+export type TLineMachineDecorator = (source: Observable<TLineItem>) => Observable<string>;
 export declare const createRxjsLineMachine: (observableDecorator: (source: Observable<{
     value: string;
     lineNumber: number;

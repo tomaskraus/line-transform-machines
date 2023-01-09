@@ -16,7 +16,7 @@ export type TLineItem = {
   lineNumber: number;
 };
 
-export type TObservableDecorator = (
+export type TLineMachineDecorator = (
   source: Observable<TLineItem>
 ) => Observable<string>;
 
