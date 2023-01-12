@@ -107,14 +107,8 @@ describe('transform - error handling', () => {
     };
     const decoWithErr = source => source.pipe((0, rxjs_1.map)(fnWithErr));
     test("transfers decorator's Fn Error - include error message", async () => {
-        expect.assertions(1);
         const lnMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(decoWithErr);
-        try {
-            await lnMachine(input, output);
-        }
-        catch (e) {
-            expect(e.message).toContain('line2 err!');
-        }
+        await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
     });
     test("transfers decorator's Fn Error - include input stream line info", async () => {
         const lnMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(decoWithErr);

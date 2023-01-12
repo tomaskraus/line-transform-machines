@@ -126,13 +126,8 @@ describe('transform - error handling', () => {
     source.pipe(map(fnWithErr));
 
   test("transfers decorator's Fn Error - include error message", async () => {
-    expect.assertions(1);
     const lnMachine = createRxjsLineMachine(decoWithErr);
-    try {
-      await lnMachine(input, output);
-    } catch (e) {
-      expect((e as Error).message).toContain('line2 err!');
-    }
+    await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
   });
 
   test("transfers decorator's Fn Error - include input stream line info", async () => {
