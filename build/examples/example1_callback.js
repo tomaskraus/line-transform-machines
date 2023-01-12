@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const line_machine_1 = require("../src/line_machine");
 const node_process_1 = require("node:process");
+const line_machine_1 = require("../src/line_machine");
 const toUpperIgnoreEmptyLinesNumbered = (s, lineNum) => {
     if (s.trim().length === 0)
         return null; // returning null removes that line from output
@@ -17,4 +17,4 @@ const runner = async () => {
     }
 };
 runner();
-//# sourceMappingURL=example.js.map
+//# sourceMappingURL=example1_callback.js.map
