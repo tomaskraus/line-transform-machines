@@ -1,4 +1,4 @@
-import {createLineMachine} from '../src/line_machine';
+import {createLineMachine} from '../src/index';
 import {stdout} from 'node:process';
 
 const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {

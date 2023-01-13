@@ -1,4 +1,4 @@
-import {createRxjsLineMachine} from '../src/rxjs_line_machine';
+import {createRxjsLineMachine} from '../src/index';
 import {Observable, map, filter} from 'rxjs';
 import {stdout} from 'node:process';
 
