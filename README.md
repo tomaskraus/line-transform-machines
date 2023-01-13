@@ -4,25 +4,40 @@ Processes text input stream/file line by line. Takes care of I/O &amp; Errors. G
 
 Maps/filters input lines by calling a (sync/async) callback on them.
 
-### Examples
+### Example
 
-#### Example 1: line add, delete & transform
+From the input file `input.txt`, print lines, in uppercase, with its line number at the beginning of each line. Do it only for non-empty lines.  
+So that:
+
+```
+Hello,
+
+world!
+
+```
+
+Becomes:
+
+```
+1: HELLO,
+3: WORLD!
+```
+
+#### Solution 1: use simple callback
 
 ```ts
 import {createLineMachine} from 'line-transform-machines';
 import {stdout} from 'node:process';
 
-// our callback
 const toUpperIgnoreEmptyLinesNumbered = (s: string, lineNum: number) => {
   if (s.trim().length === 0) return null; // returning null removes that line from output
-  return `${lineNum}:\n    ${s.toUpperCase()}`; // can 'insert' new lines using newline characters in the string returned
-};
+  return `${lineNum}: ${s.toUpperCase()}`;
+
 const lineMachine = createLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
 const runner = async () => {
   try {
-    const stats = await lineMachine('./examples/input.txt', stdout);
-    console.log('\nstats:', stats);
+    await lineMachine('./examples/input.txt', stdout);
   } catch (err) {
     console.error(err);
   }
@@ -30,45 +45,33 @@ const runner = async () => {
 runner();
 ```
 
-Input file (`'./examples/input.txt'`):
+#### Solution 2: use RxJS
 
-```
+```ts
+import {createLineMachine} from 'line-transform-machines';
+import {Observable, map, filter} from 'rxjs';
+import {stdout} from 'node:process';
 
-"name": "line-transform-machines",
+const toUpperIgnoreEmptyLinesNumbered = (
+  obs: Observable<{value: string; lineNumber: number}>
+): Observable<string> => {
+  return obs.pipe(
+    filter(x => x.value.trim().length > 0),
+    map(x => `${x.lineNumber}: ${x.value.toLocaleUpperCase()}`)
+  );
+};
 
-  "version": "0.1.0",
-  "description": "Process text input stream/file line by line. Takes care of I/O & Errors. Great for CLI apps.",
+const lineMachine = createRxjsLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
-  "types": "build/src/index.d.ts",
-  "main": "build/src/index.js",
-
-  "files": [
-    "build/src"
-  ],
-
-
-```
-
-Output:
-
-```
-2:
-    "NAME": "LINE-TRANSFORM-MACHINES",
-4:
-      "VERSION": "0.1.0",
-5:
-      "DESCRIPTION": "PROCESS TEXT INPUT STREAM/FILE LINE BY LINE. TAKES CARE OF I/O & ERRORS. GREAT FOR CLI APPS.",
-7:
-      "TYPES": "BUILD/SRC/INDEX.D.TS",
-8:
-      "MAIN": "BUILD/SRC/INDEX.JS",
-10:
-      "FILES": [
-11:
-        "BUILD/SRC"
-12:
-      ],
-stats: { linesRead: 14, inputFileName: './examples/input.txt' }
+// ...the same code as in solution 1
+const runner = async () => {
+  try {
+    await lineMachine('./examples/input.txt', stdout);
+  } catch (err) {
+    console.error(err);
+  }
+};
+runner();
 ```
 
 #### Example 2: error handling
