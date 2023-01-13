@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {createLineMachine} from '../src/line_machine';
-import type {TMapLineCallback} from '../src/line_machine';
+import type {TLineCallback} from '../src/line_machine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -26,7 +26,7 @@ afterEach(() => {
   mock.restore();
 });
 
-const copyFn: TMapLineCallback = (
+const copyFn: TLineCallback = (
   line: string
   //   lineNumber: number
 ): string => line;

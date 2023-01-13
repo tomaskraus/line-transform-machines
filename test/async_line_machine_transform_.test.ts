@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {createAsyncLineMachine} from '../src/async_line_machine';
-import type {TAsyncMapLineCallback} from '../src/async_line_machine';
+import type {TAsyncLineCallback} from '../src/async_line_machine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -30,14 +30,14 @@ afterEach(() => {
 });
 
 describe('transform', () => {
-  const lineNumberAsyncFn: TAsyncMapLineCallback = (
+  const lineNumberAsyncFn: TAsyncLineCallback = (
     line: string,
     lineNumber: number
   ): Promise<string> => {
     return Promise.resolve(`${lineNumber}: ${line}`);
   };
 
-  const noDollyAsyncFn: TAsyncMapLineCallback = (line: string) => {
+  const noDollyAsyncFn: TAsyncLineCallback = (line: string) => {
     if (line.trim() === 'Dolly') {
       return Promise.resolve(null);
     }
@@ -65,7 +65,7 @@ describe('transform', () => {
   });
 
   test('outputs more lines if fn returns a string with newLine(s)', async () => {
-    const nlFn: TAsyncMapLineCallback = (line: string) =>
+    const nlFn: TAsyncLineCallback = (line: string) =>
       Promise.resolve(`-\n${line}`);
 
     const lnMachine = createAsyncLineMachine(nlFn);
@@ -77,10 +77,7 @@ describe('transform', () => {
 });
 
 describe('transform - error handling', () => {
-  const fnWithErr: TAsyncMapLineCallback = (
-    line: string,
-    lineNumber: number
-  ) => {
+  const fnWithErr: TAsyncLineCallback = (line: string, lineNumber: number) => {
     if (lineNumber === 2) {
       //   return Promise.reject('line2 err!');
       return Promise.reject(new Error('line is 2!'));

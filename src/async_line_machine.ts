@@ -9,13 +9,13 @@ import type {
   TLineStreamCallback,
 } from './line_machine_common';
 
-export type TAsyncMapLineCallback = (
+export type TAsyncLineCallback = (
   line: string,
   lineNumber: number
 ) => Promise<string | null>;
 
 export const createAsyncLineMachine = (
-  callback: TAsyncMapLineCallback,
+  callback: TAsyncLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
   const lineStreamCallback: TLineStreamCallback = async (

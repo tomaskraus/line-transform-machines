@@ -1,7 +1,7 @@
 import mock from 'mock-fs';
 
 import {createLineMachine} from '../src/line_machine';
-import type {TMapLineCallback} from '../src/line_machine';
+import type {TLineCallback} from '../src/line_machine';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -30,14 +30,14 @@ afterEach(() => {
 });
 
 describe('transform', () => {
-  const lineNumberFn: TMapLineCallback = (
+  const lineNumberFn: TLineCallback = (
     line: string,
     lineNumber: number
   ): string => {
     return `${lineNumber}: ${line}`;
   };
 
-  const noDollyFn: TMapLineCallback = (line: string) => {
+  const noDollyFn: TLineCallback = (line: string) => {
     if (line.trim() === 'Dolly') {
       return null;
     }
@@ -65,7 +65,7 @@ describe('transform', () => {
   });
 
   test('outputs more lines if fn returns a string with newLine(s)', async () => {
-    const nlFn: TMapLineCallback = (line: string) => `-\n${line}`;
+    const nlFn: TLineCallback = (line: string) => `-\n${line}`;
 
     const lnMachine = createLineMachine(nlFn);
 
@@ -76,7 +76,7 @@ describe('transform', () => {
 });
 
 describe('transform - error handling', () => {
-  const fnWithErr: TMapLineCallback = (line: string, lineNumber: number) => {
+  const fnWithErr: TLineCallback = (line: string, lineNumber: number) => {
     if (lineNumber === 2) {
       throw new Error('line2 err!');
       // return Promise.reject(new Error('line is 2!'));

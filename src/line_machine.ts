@@ -9,13 +9,10 @@ import type {
   TLineStreamCallback,
 } from './line_machine_common';
 
-export type TMapLineCallback = (
-  line: string,
-  lineNumber: number
-) => string | null;
+export type TLineCallback = (line: string, lineNumber: number) => string | null;
 
 export const createLineMachine = (
-  callback: TMapLineCallback,
+  callback: TLineCallback,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
   const lineStreamCallback: TLineStreamCallback = async (
