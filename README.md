@@ -2,7 +2,9 @@
 
 Processes text input stream/file line by line. Takes care of I/O &amp; Errors. Great for CLI apps.
 
-Maps/filters input lines by calling a (sync/async) callback on them.
+- `LineMachine`/`AsyncLineMachine` processes input lines by calling a (sync/async) callback on them.
+
+- `RxjsLineMachine` processes input lines by subscribing to the customized Observable.
 
 ### Example
 
