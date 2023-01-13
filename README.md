@@ -74,7 +74,7 @@ const runner = async () => {
 runner();
 ```
 
-#### Example 2: error handling
+#### Error handling
 
 ```ts
 import {createLineMachine} from 'line-transform-machines';
@@ -119,7 +119,7 @@ Not a number: hello
 
 See that input file name & line is present in the error message automatically;)
 
-By default, the saved output file contains values before error has been thrown:
+If output is a file, it contains computed values before error has been thrown:
 
 Output file (`./examples/normalized.txt`):
 
