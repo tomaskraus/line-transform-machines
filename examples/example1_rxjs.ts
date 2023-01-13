@@ -1,6 +1,6 @@
-import {stdout} from 'node:process';
-import {Observable, map, filter} from 'rxjs';
 import {createRxjsLineMachine} from '../src/rxjs_line_machine';
+import {Observable, map, filter} from 'rxjs';
+import {stdout} from 'node:process';
 
 const toUpperIgnoreEmptyLinesNumbered = (
   obs: Observable<{value: string; lineNumber: number}>
@@ -13,6 +13,7 @@ const toUpperIgnoreEmptyLinesNumbered = (
 
 const lineMachine = createRxjsLineMachine(toUpperIgnoreEmptyLinesNumbered);
 
+// ...the same code as in solution 1
 const runner = async () => {
   try {
     await lineMachine('./examples/input.txt', stdout);
