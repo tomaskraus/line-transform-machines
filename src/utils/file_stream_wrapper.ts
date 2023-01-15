@@ -4,6 +4,7 @@
 
 import stream from 'stream';
 import * as fsp from 'node:fs/promises';
+import * as pth from 'node:path';
 
 export type TFileStreamContext = {
   inputFileName?: string;
@@ -21,6 +22,16 @@ export type TFileProcessor<TResult> = (
   outputFileNameOrStream: stream.Writable | string
   // options?: TOptions
 ) => Promise<TResult>;
+
+const _createOutputFile = async (fileName: string): Promise<fsp.FileHandle> => {
+  const dirPath = pth.dirname(fileName);
+  if (dirPath !== '.') {
+    return fsp
+      .mkdir(dirPath, {recursive: true})
+      .then(() => fsp.open(fileName, 'w'));
+  }
+  return fsp.open(fileName, 'w');
+};
 
 export const fileStreamWrapper = <TResult>(
   proc: TStreamProcessor<TResult>
@@ -67,8 +78,7 @@ export const fileStreamWrapper = <TResult>(
 
       const context: TFileStreamContext = {};
       if (typeof outputFileNameOrStream === 'string') {
-        fsp
-          .open(outputFileNameOrStream, 'w')
+        _createOutputFile(outputFileNameOrStream)
           .then(fho =>
             continueWithOutStreamReady(fho.createWriteStream(), {
               ...context,

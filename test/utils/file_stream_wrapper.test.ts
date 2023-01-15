@@ -24,12 +24,20 @@ const copyStreamProcessor: TStreamProcessor<TFileStreamContext> = (
 
 const copyProcessor = fileStreamWrapper(copyStreamProcessor);
 
+const errorStreamProcessor: TStreamProcessor<TFileStreamContext> = () =>
+  Promise.reject(new Error('Err in process'));
+
+const errorProcessor = fileStreamWrapper(errorStreamProcessor);
+
 beforeEach(() => {
   mock({
     'my-dir': {
       'my-file.txt': 'Hello, \nWorld!',
       'read-only.txt': mock.file({
         content: 'read only...',
+        mode: 0o0444,
+      }),
+      readOnlyDir: mock.directory({
         mode: 0o0444,
       }),
     },
@@ -56,7 +64,13 @@ describe('input stream', () => {
     expect(outMemStream.toString()).toEqual('Hello, \nWorld!');
   });
 
-  test('output as file - ok', async () => {
+  test('output as file - error in the stream processor', async () => {
+    await expect(
+      errorProcessor(inputFileStream, `${PATH_PREFIX}/out.txt`)
+    ).rejects.toThrow('Err in process');
+  });
+
+  test('output as a new file - ok', async () => {
     const res = await copyProcessor(inputFileStream, `${PATH_PREFIX}/out.txt`);
 
     expect(res.outputFileName).toContain('out.txt');
@@ -64,9 +78,37 @@ describe('input stream', () => {
     expect(buff.toString()).toEqual('Hello, \nWorld!');
   });
 
+  test('output as a new file at the root directory - ok', async () => {
+    const res = await copyProcessor(inputFileStream, 'out.txt');
+
+    expect(res.outputFileName).toContain('out.txt');
+    const buff = fs.readFileSync('out.txt');
+    expect(buff.toString()).toEqual('Hello, \nWorld!');
+  });
+
   test('output as file - read-only error', async () => {
     await expect(
       copyProcessor(inputFileStream, `${PATH_PREFIX}/read-only.txt`)
+    ).rejects.toThrow('permission');
+  });
+
+  test('output as a new file within a new directory structure - ok', async () => {
+    const res = await copyProcessor(
+      inputFileStream,
+      `${PATH_PREFIX}/newDir/newDir2/out.txt`
+    );
+
+    expect(res.outputFileName).toContain('out.txt');
+    const buff = fs.readFileSync(`${PATH_PREFIX}/newDir/newDir2/out.txt`);
+    expect(buff.toString()).toEqual('Hello, \nWorld!');
+  });
+
+  test('output as file within a new directory structure - read-only directory error', async () => {
+    await expect(
+      copyProcessor(
+        inputFileStream,
+        `${PATH_PREFIX}/readOnlyDir/newDir2/read-only.txt`
+      )
     ).rejects.toThrow('permission');
   });
 });

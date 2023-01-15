@@ -28,6 +28,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileStreamWrapper = void 0;
 const fsp = __importStar(require("node:fs/promises"));
+const pth = __importStar(require("node:path"));
+const _createOutputFile = async (fileName) => {
+    const dirPath = pth.dirname(fileName);
+    if (dirPath !== '.') {
+        return fsp
+            .mkdir(dirPath, { recursive: true })
+            .then(() => fsp.open(fileName, 'w'));
+    }
+    return fsp.open(fileName, 'w');
+};
 const fileStreamWrapper = (proc) => {
     return (inputFileNameOrStream, outputFileNameOrStream
     // options?: TOptions
@@ -59,8 +69,7 @@ const fileStreamWrapper = (proc) => {
             };
             const context = {};
             if (typeof outputFileNameOrStream === 'string') {
-                fsp
-                    .open(outputFileNameOrStream, 'w')
+                _createOutputFile(outputFileNameOrStream)
                     .then(fho => continueWithOutStreamReady(fho.createWriteStream(), {
                     ...context,
                     outputFileName: outputFileNameOrStream,
