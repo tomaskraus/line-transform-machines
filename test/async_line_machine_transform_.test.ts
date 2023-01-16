@@ -90,8 +90,8 @@ describe('transform - error handling', () => {
     try {
       await lnMachine(input, output);
     } catch (e) {
+      expect((e as Error).message).toContain('line [2] of input'); //line info
       expect((e as Error).message).toContain('World!'); //line
-      expect((e as Error).message).toContain('line [2]'); //line info
       expect((e as Error).message).toContain('line2 err!'); //err
     }
   });
@@ -102,8 +102,8 @@ describe('transform - error handling', () => {
     try {
       await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
     } catch (e) {
-      expect((e as Error).message).toContain('Dolly'); //line
       expect((e as Error).message).toContain('/dolly-text.txt:2'); //file&line info
+      expect((e as Error).message).toContain('Dolly'); //line
       expect((e as Error).message).toContain('line2 err!'); //err
     }
   });

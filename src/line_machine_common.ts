@@ -92,9 +92,9 @@ export const fileLineProcessorWrapper = (
 
 export const getLineContextInfo = (context: TFileLineContext): string => {
   if (context.inputFileName) {
-    return `\n${context.value}\n[${context.inputFileName}:${context.lineNumber}]`;
+    return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
   }
-  return `\n${context.value}\nline [${context.lineNumber}]`;
+  return `\nline [${context.lineNumber}] of input\n${context.value}`;
 };
 
 export const addLineInfoToErrorObj =
