@@ -25,6 +25,7 @@ export const createAsyncLineMachine = (
   ): Promise<TFileLineContext> => {
     try {
       for await (const line of lineStream) {
+        context.value = line;
         context.lineNumber++;
         const lineResult = await callback(line, context.lineNumber);
         await writeOutput(lineResult);

@@ -87,17 +87,29 @@ describe('transform - error handling', () => {
         }
         return `-\n${line}`;
     };
-    test('transfers Fn Error - include error message', async () => {
+    test('input stream line Error: include line value, input stream line number and Error message', async () => {
+        expect.assertions(3);
         const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
-        await expect(lnMachine(input, output)).rejects.toThrow('line2 err!');
+        try {
+            await lnMachine(input, output);
+        }
+        catch (e) {
+            expect(e.message).toContain('World!'); //line
+            expect(e.message).toContain('line [2]'); //line info
+            expect(e.message).toContain('line2 err!'); //err
+        }
     });
-    test('transfers Fn Error - include input stream line info', async () => {
+    test('input file line Error: include line value, file name & line number and Error message', async () => {
+        expect.assertions(3);
         const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
-        await expect(lnMachine(input, output)).rejects.toThrow('line [2]');
-    });
-    test('transfers Fn Error - include file & line info', async () => {
-        const lnMachine = (0, line_machine_1.createLineMachine)(fnWithErr);
-        await expect(lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output)).rejects.toThrow('/dolly-text.txt:2');
+        try {
+            await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
+        }
+        catch (e) {
+            expect(e.message).toContain('Dolly'); //line
+            expect(e.message).toContain('/dolly-text.txt:2'); //file&line info
+            expect(e.message).toContain('line2 err!'); //err
+        }
     });
 });
 //# sourceMappingURL=line_machine_transform.test.js.map

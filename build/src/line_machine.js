@@ -7,6 +7,7 @@ const createLineMachine = (callback, options) => {
     ) => {
         try {
             for await (const line of lineStream) {
+                context.value = line;
                 context.lineNumber++;
                 const lineResult = callback(line, context.lineNumber);
                 await writeOutput(lineResult);

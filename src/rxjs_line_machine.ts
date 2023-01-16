@@ -32,7 +32,10 @@ export const createRxjsLineMachine = (
     context //, opts
   ): Promise<TFileLineContext> => {
     const initialObservable: Observable<TLineItem> = from(lineStream).pipe(
-      tap(() => context.lineNumber++),
+      tap((s: string) => {
+        context.value = s;
+        context.lineNumber++;
+      }),
       map(s => ({value: s, lineNumber: context.lineNumber}))
     );
 

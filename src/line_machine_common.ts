@@ -13,7 +13,10 @@ import type {
   TFileProcessor,
 } from './utils/file_stream_wrapper';
 
-export type TFileLineContext = TFileStreamContext & {lineNumber: number};
+export type TFileLineContext = TFileStreamContext & {
+  value?: string;
+  lineNumber: number;
+};
 
 /**
  * Options
@@ -89,9 +92,9 @@ export const fileLineProcessorWrapper = (
 
 export const getLineContextInfo = (context: TFileLineContext): string => {
   if (context.inputFileName) {
-    return `[${context.inputFileName}:${context.lineNumber}]`;
+    return `\n${context.value}\n[${context.inputFileName}:${context.lineNumber}]`;
   }
-  return `line [${context.lineNumber}]`;
+  return `\n${context.value}\nline [${context.lineNumber}]`;
 };
 
 export const addLineInfoToErrorObj =

@@ -82,39 +82,32 @@ describe('transform', () => {
 describe('transform - error handling', () => {
     const fnWithErr = (line, lineNumber) => {
         if (lineNumber === 2) {
-            //   return Promise.reject('line2 err!');
-            return Promise.reject(new Error('line is 2!'));
+            return Promise.reject(new Error('line2 err!'));
         }
         return Promise.resolve(`-\n${line}`);
     };
-    test('transfers Fn Error - include error message', async () => {
-        expect.assertions(1);
+    test('input stream line Error: include line value, input stream line number and Error message', async () => {
+        expect.assertions(3);
         const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(fnWithErr);
         try {
             await lnMachine(input, output);
         }
         catch (e) {
-            expect(e.message).toContain('line is 2!');
+            expect(e.message).toContain('World!'); //line
+            expect(e.message).toContain('line [2]'); //line info
+            expect(e.message).toContain('line2 err!'); //err
         }
     });
-    test('transfers Fn Error - include input stream line info', async () => {
-        expect.assertions(1);
-        const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(fnWithErr);
-        try {
-            await lnMachine(input, output);
-        }
-        catch (e) {
-            expect(e.message).toContain('line [2]');
-        }
-    });
-    test('transfers Fn Error - include file & line info', async () => {
-        expect.assertions(1);
+    test('input file line Error: include line value, file name & line number and Error message', async () => {
+        expect.assertions(3);
         const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(fnWithErr);
         try {
             await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
         }
         catch (e) {
-            expect(e.message).toContain('/dolly-text.txt:2');
+            expect(e.message).toContain('Dolly'); //line
+            expect(e.message).toContain('/dolly-text.txt:2'); //file&line info
+            expect(e.message).toContain('line2 err!'); //err
         }
     });
 });

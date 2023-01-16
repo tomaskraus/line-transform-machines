@@ -6,7 +6,10 @@ const line_machine_common_1 = require("./line_machine_common");
 const createRxjsLineMachine = (observableDecorator, options) => {
     const lineStreamCallback = async (lineStream, writeOutput, context //, opts
     ) => {
-        const initialObservable = (0, rxjs_1.from)(lineStream).pipe((0, rxjs_1.tap)(() => context.lineNumber++), (0, rxjs_1.map)(s => ({ value: s, lineNumber: context.lineNumber })));
+        const initialObservable = (0, rxjs_1.from)(lineStream).pipe((0, rxjs_1.tap)((s) => {
+            context.value = s;
+            context.lineNumber++;
+        }), (0, rxjs_1.map)(s => ({ value: s, lineNumber: context.lineNumber })));
         return new Promise((resolve, reject) => observableDecorator(initialObservable).subscribe({
             next: line => writeOutput(line),
             error: err => {

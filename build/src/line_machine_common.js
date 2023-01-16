@@ -54,9 +54,9 @@ const fileLineProcessorWrapper = (lineStreamCallback, options) => {
 exports.fileLineProcessorWrapper = fileLineProcessorWrapper;
 const getLineContextInfo = (context) => {
     if (context.inputFileName) {
-        return `[${context.inputFileName}:${context.lineNumber}]`;
+        return `\n${context.value}\n[${context.inputFileName}:${context.lineNumber}]`;
     }
-    return `line [${context.lineNumber}]`;
+    return `\n${context.value}\nline [${context.lineNumber}]`;
 };
 exports.getLineContextInfo = getLineContextInfo;
 const addLineInfoToErrorObj = (context) => (err) => {

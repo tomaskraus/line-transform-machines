@@ -5,6 +5,7 @@ import ReadlineTransform from 'readline-transform';
 import type { TFileStreamContext } from './utils/file_stream_wrapper';
 import type { TFileProcessor } from './utils/file_stream_wrapper';
 export type TFileLineContext = TFileStreamContext & {
+    value?: string;
     lineNumber: number;
 };
 /**
