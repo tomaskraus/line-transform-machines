@@ -64,11 +64,15 @@ export const fileStreamWrapper = <TResult>(
         if (typeof inputFileNameOrStream === 'string') {
           fsp
             .open(inputFileNameOrStream)
-            .then(fhi =>
-              continueWithInStreamReady(fhi.createReadStream(), outStream, {
-                ...context,
-                inputFileName: inputFileNameOrStream,
-              })
+            .then(inputFileHandle =>
+              continueWithInStreamReady(
+                inputFileHandle.createReadStream(),
+                outStream,
+                {
+                  ...context,
+                  inputFileName: inputFileNameOrStream,
+                }
+              )
             )
             .catch(err => reject(err));
         } else {

@@ -57,7 +57,7 @@ const fileStreamWrapper = (proc) => {
                 if (typeof inputFileNameOrStream === 'string') {
                     fsp
                         .open(inputFileNameOrStream)
-                        .then(fhi => continueWithInStreamReady(fhi.createReadStream(), outStream, {
+                        .then(inputFileHandle => continueWithInStreamReady(inputFileHandle.createReadStream(), outStream, {
                         ...context,
                         inputFileName: inputFileNameOrStream,
                     }))
