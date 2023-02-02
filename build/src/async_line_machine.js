@@ -15,7 +15,7 @@ const createAsyncLineMachine = (callback, options) => {
             return Promise.resolve(context);
         }
         catch (err) {
-            return Promise.reject((0, line_machine_common_1.addLineInfoToErrorObj)(context)(err));
+            return Promise.reject(new line_machine_common_1.LineMachineError(context, err));
         }
     };
     return (0, line_machine_common_1.fileLineProcessorWrapper)(lineStreamCallback, options);

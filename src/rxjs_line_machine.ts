@@ -1,7 +1,7 @@
 import {Observable, from, tap, map} from 'rxjs';
 
 import {
-  addLineInfoToErrorObj,
+  LineMachineError,
   fileLineProcessorWrapper,
 } from './line_machine_common';
 import type {TFileProcessor} from './utils/file_stream_wrapper';
@@ -43,7 +43,7 @@ export const createRxjsLineMachine = (
       observableDecorator(initialObservable).subscribe({
         next: line => writeOutput(line), // more obvious than just "next: writeOutput"
         error: err => {
-          reject(addLineInfoToErrorObj(context)(err as Error));
+          reject(new LineMachineError(context, err as Error));
         },
         complete: () => resolve(context),
       })

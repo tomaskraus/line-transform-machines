@@ -1,5 +1,5 @@
 import {
-  addLineInfoToErrorObj,
+  LineMachineError,
   fileLineProcessorWrapper,
 } from './line_machine_common';
 import type {TFileProcessor} from './utils/file_stream_wrapper';
@@ -32,7 +32,7 @@ export const createAsyncLineMachine = (
       }
       return Promise.resolve(context);
     } catch (err) {
-      return Promise.reject(addLineInfoToErrorObj(context)(err as Error));
+      return Promise.reject(new LineMachineError(context, err as Error));
     }
   };
 

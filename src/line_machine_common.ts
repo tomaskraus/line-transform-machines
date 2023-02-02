@@ -97,9 +97,18 @@ export const getLineContextInfo = (context: TFileLineContext): string => {
   return `\nline [${context.lineNumber}] of input\n${context.value}`;
 };
 
-export const addLineInfoToErrorObj =
-  (context: TFileLineContext) =>
-  (err: Error): Error => {
-    err.message = `${getLineContextInfo(context)}\n${err.message}`;
-    return err;
-  };
+export class LineMachineError extends Error {
+  static getLineContextInfo(context: TFileLineContext): string {
+    if (context.inputFileName) {
+      return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
+    }
+    return `\nline [${context.lineNumber}] of input\n${context.value}`;
+  }
+
+  constructor(context: TFileLineContext, err: Error) {
+    super(`${getLineContextInfo(context)}\n${err.message}`);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+  }
+}
