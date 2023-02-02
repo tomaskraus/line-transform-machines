@@ -6,6 +6,7 @@ import stream from 'stream';
 
 import * as mStream from 'memory-streams';
 import * as fs from 'fs';
+import {LineMachineError} from '../src/line_machine_common';
 
 let input: stream.Readable;
 let output: stream.Writable;
@@ -85,26 +86,34 @@ describe('transform - error handling', () => {
   };
 
   test('input stream line Error: include line value, input stream line number and Error message', async () => {
-    expect.assertions(3);
+    expect.assertions(6);
     const lnMachine = createAsyncLineMachine(fnWithErr);
     try {
       await lnMachine(input, output);
     } catch (e) {
-      expect((e as Error).message).toContain('line [2] of input'); //line info
-      expect((e as Error).message).toContain('World!'); //line
-      expect((e as Error).message).toContain('line2 err!'); //err
+      expect(e).toBeInstanceOf(LineMachineError);
+      const lerr = e as LineMachineError;
+      expect(lerr.lineNumber).toEqual(2);
+      expect(lerr.inputFileName).toEqual('');
+      expect(lerr.at).toEqual('');
+      expect(lerr.lineValue).toContain('World!');
+      expect(lerr.message).toContain('line2 err!');
     }
   });
 
-  test('input file line Error: include line value, file name & line number and Error message', async () => {
-    expect.assertions(3);
+  test('input file line Error, custom resourceDir: include line value, file name & line number and Error message', async () => {
+    expect.assertions(6);
     const lnMachine = createAsyncLineMachine(fnWithErr);
     try {
       await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
     } catch (e) {
-      expect((e as Error).message).toContain('/dolly-text.txt:2'); //file&line info
-      expect((e as Error).message).toContain('Dolly'); //line
-      expect((e as Error).message).toContain('line2 err!'); //err
+      expect(e).toBeInstanceOf(LineMachineError);
+      const lerr = e as LineMachineError;
+      expect(lerr.lineNumber).toEqual(2);
+      expect(lerr.inputFileName).toEqual(`${PATH_PREFIX}/dolly-text.txt`);
+      expect(lerr.at).toEqual(`${PATH_PREFIX}/dolly-text.txt:2`);
+      expect(lerr.lineValue).toContain('Dolly');
+      expect(lerr.message).toContain('line2 err!');
     }
   });
 });

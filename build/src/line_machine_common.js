@@ -53,17 +53,17 @@ const fileLineProcessorWrapper = (lineStreamCallback, options) => {
 };
 exports.fileLineProcessorWrapper = fileLineProcessorWrapper;
 class LineMachineError extends Error {
-    static getLineContextInfo(context) {
-        if (context.inputFileName) {
-            return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
-        }
-        return `\nline [${context.lineNumber}] of input\n${context.value}`;
-    }
     constructor(context, err, callerFn) {
-        super(`${LineMachineError.getLineContextInfo(context)}\n${err.message}`);
+        super(err.message);
         // properly capture stack trace in Node.js
         Error.captureStackTrace(this, callerFn || this.constructor);
         this.name = this.constructor.name;
+        this.lineNumber = context.lineNumber;
+        this.inputFileName = context.inputFileName || '';
+        this.at = context.inputFileName
+            ? `${context.inputFileName}:${context.lineNumber}`
+            : '';
+        this.lineValue = context.value || '';
     }
 }
 exports.LineMachineError = LineMachineError;

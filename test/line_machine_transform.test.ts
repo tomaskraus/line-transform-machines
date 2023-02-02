@@ -2,6 +2,7 @@ import mock from 'mock-fs';
 
 import {createLineMachine} from '../src/line_machine';
 import type {TLineCallback} from '../src/line_machine';
+import {LineMachineError} from '../src/line_machine_common';
 import stream from 'stream';
 
 import * as mStream from 'memory-streams';
@@ -85,26 +86,34 @@ describe('transform - error handling', () => {
   };
 
   test('input stream line Error: include line value, input stream line number and Error message', async () => {
-    expect.assertions(3);
+    expect.assertions(6);
     const lnMachine = createLineMachine(fnWithErr);
     try {
       await lnMachine(input, output);
     } catch (e) {
-      expect((e as Error).message).toContain('line [2] of input'); //line info
-      expect((e as Error).message).toContain('World!'); //line
-      expect((e as Error).message).toContain('line2 err!'); //err
+      expect(e).toBeInstanceOf(LineMachineError);
+      const lerr = e as LineMachineError;
+      expect(lerr.lineNumber).toEqual(2);
+      expect(lerr.inputFileName).toEqual('');
+      expect(lerr.at).toEqual('');
+      expect(lerr.lineValue).toContain('World!');
+      expect(lerr.message).toContain('line2 err!');
     }
   });
 
   test('input file line Error: include line value, file name & line number and Error message', async () => {
-    expect.assertions(3);
+    expect.assertions(6);
     const lnMachine = createLineMachine(fnWithErr);
     try {
       await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
     } catch (e) {
-      expect((e as Error).message).toContain('/dolly-text.txt:2'); //file&line info
-      expect((e as Error).message).toContain('Dolly'); //line
-      expect((e as Error).message).toContain('line2 err!'); //err
+      expect(e).toBeInstanceOf(LineMachineError);
+      const lerr = e as LineMachineError;
+      expect(lerr.lineNumber).toEqual(2);
+      expect(lerr.inputFileName).toContain('/dolly-text.txt');
+      expect(lerr.at).toContain('/dolly-text.txt:2');
+      expect(lerr.lineValue).toContain('Dolly');
+      expect(lerr.message).toContain('line2 err!');
     }
   });
 });

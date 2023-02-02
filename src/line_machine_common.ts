@@ -91,21 +91,26 @@ export const fileLineProcessorWrapper = (
 };
 
 export class LineMachineError extends Error {
-  static getLineContextInfo(context: TFileLineContext): string {
-    if (context.inputFileName) {
-      return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
-    }
-    return `\nline [${context.lineNumber}] of input\n${context.value}`;
-  }
+  lineNumber: Number;
+  inputFileName: string;
+  at: string;
+  lineValue: string;
 
   constructor(
     context: TFileLineContext,
     err: Error,
     callerFn?: CallableFunction
   ) {
-    super(`${LineMachineError.getLineContextInfo(context)}\n${err.message}`);
+    super(err.message);
     // properly capture stack trace in Node.js
     Error.captureStackTrace(this, callerFn || this.constructor);
     this.name = this.constructor.name;
+
+    this.lineNumber = context.lineNumber;
+    this.inputFileName = context.inputFileName || '';
+    this.at = context.inputFileName
+      ? `${context.inputFileName}:${context.lineNumber}`
+      : '';
+    this.lineValue = context.value || '';
   }
 }

@@ -31,6 +31,7 @@ const rxjs_1 = require("rxjs");
 const rxjs_line_machine_1 = require("../src/rxjs_line_machine");
 const mStream = __importStar(require("memory-streams"));
 const fs = __importStar(require("fs"));
+const line_machine_common_1 = require("../src/line_machine_common");
 let input;
 let output;
 beforeEach(() => { });
@@ -107,27 +108,35 @@ describe('transform - error handling', () => {
     };
     const decoWithErr = source => source.pipe((0, rxjs_1.map)(fnWithErr));
     test('input stream line Error: include line value, input stream line number and Error message', async () => {
-        expect.assertions(3);
+        expect.assertions(6);
         const lnMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(decoWithErr);
         try {
             await lnMachine(input, output);
         }
         catch (e) {
-            expect(e.message).toContain('line [2] of input'); //line info
-            expect(e.message).toContain('World!'); //line
-            expect(e.message).toContain('line2 err!'); //err
+            expect(e).toBeInstanceOf(line_machine_common_1.LineMachineError);
+            const lerr = e;
+            expect(lerr.lineNumber).toEqual(2);
+            expect(lerr.inputFileName).toEqual('');
+            expect(lerr.at).toEqual('');
+            expect(lerr.lineValue).toContain('World!');
+            expect(lerr.message).toContain('line2 err!');
         }
     });
     test('input file line Error: include line value, file name & line number and Error message', async () => {
-        expect.assertions(3);
+        expect.assertions(6);
         const lnMachine = (0, rxjs_line_machine_1.createRxjsLineMachine)(decoWithErr);
         try {
             await lnMachine(`${PATH_PREFIX}/dolly-text.txt`, output);
         }
         catch (e) {
-            expect(e.message).toContain('/dolly-text.txt:2'); //file&line info
-            expect(e.message).toContain('Dolly'); //line
-            expect(e.message).toContain('line2 err!'); //err
+            expect(e).toBeInstanceOf(line_machine_common_1.LineMachineError);
+            const lerr = e;
+            expect(lerr.lineNumber).toEqual(2);
+            expect(lerr.inputFileName).toEqual(`${PATH_PREFIX}/dolly-text.txt`);
+            expect(lerr.at).toEqual(`${PATH_PREFIX}/dolly-text.txt:2`);
+            expect(lerr.lineValue).toContain('Dolly');
+            expect(lerr.message).toContain('line2 err!');
         }
     });
 });
