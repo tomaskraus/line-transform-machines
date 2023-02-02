@@ -32,7 +32,9 @@ export const createAsyncLineMachine = (
       }
       return Promise.resolve(context);
     } catch (err) {
-      return Promise.reject(new LineMachineError(context, err as Error));
+      return Promise.reject(
+        new LineMachineError(context, err as Error, lineStreamCallback)
+      );
     }
   };
 

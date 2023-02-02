@@ -90,13 +90,6 @@ export const fileLineProcessorWrapper = (
   return fileStreamWrapper<TFileLineContext>(streamProc);
 };
 
-export const getLineContextInfo = (context: TFileLineContext): string => {
-  if (context.inputFileName) {
-    return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
-  }
-  return `\nline [${context.lineNumber}] of input\n${context.value}`;
-};
-
 export class LineMachineError extends Error {
   static getLineContextInfo(context: TFileLineContext): string {
     if (context.inputFileName) {
@@ -105,10 +98,14 @@ export class LineMachineError extends Error {
     return `\nline [${context.lineNumber}] of input\n${context.value}`;
   }
 
-  constructor(context: TFileLineContext, err: Error) {
-    super(`${getLineContextInfo(context)}\n${err.message}`);
+  constructor(
+    context: TFileLineContext,
+    err: Error,
+    callerFn?: CallableFunction
+  ) {
+    super(`${LineMachineError.getLineContextInfo(context)}\n${err.message}`);
     // properly capture stack trace in Node.js
-    Error.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace(this, callerFn || this.constructor);
     this.name = this.constructor.name;
   }
 }

@@ -43,7 +43,9 @@ export const createRxjsLineMachine = (
       observableDecorator(initialObservable).subscribe({
         next: line => writeOutput(line), // more obvious than just "next: writeOutput"
         error: err => {
-          reject(new LineMachineError(context, err as Error));
+          reject(
+            new LineMachineError(context, err as Error, lineStreamCallback)
+          );
         },
         complete: () => resolve(context),
       })

@@ -6,7 +6,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LineMachineError = exports.getLineContextInfo = exports.fileLineProcessorWrapper = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
+exports.LineMachineError = exports.fileLineProcessorWrapper = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
 const events_1 = require("events");
 const readline_transform_1 = __importDefault(require("readline-transform"));
 const file_stream_wrapper_1 = require("./utils/file_stream_wrapper");
@@ -52,13 +52,6 @@ const fileLineProcessorWrapper = (lineStreamCallback, options) => {
     return (0, file_stream_wrapper_1.fileStreamWrapper)(streamProc);
 };
 exports.fileLineProcessorWrapper = fileLineProcessorWrapper;
-const getLineContextInfo = (context) => {
-    if (context.inputFileName) {
-        return `\n[${context.inputFileName}:${context.lineNumber}]\n${context.value}`;
-    }
-    return `\nline [${context.lineNumber}] of input\n${context.value}`;
-};
-exports.getLineContextInfo = getLineContextInfo;
 class LineMachineError extends Error {
     static getLineContextInfo(context) {
         if (context.inputFileName) {
@@ -66,10 +59,10 @@ class LineMachineError extends Error {
         }
         return `\nline [${context.lineNumber}] of input\n${context.value}`;
     }
-    constructor(context, err) {
-        super(`${(0, exports.getLineContextInfo)(context)}\n${err.message}`);
+    constructor(context, err, callerFn) {
+        super(`${LineMachineError.getLineContextInfo(context)}\n${err.message}`);
         // properly capture stack trace in Node.js
-        Error.captureStackTrace(this, this.constructor);
+        Error.captureStackTrace(this, callerFn || this.constructor);
         this.name = this.constructor.name;
     }
 }

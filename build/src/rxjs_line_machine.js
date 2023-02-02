@@ -13,7 +13,7 @@ const createRxjsLineMachine = (observableDecorator, options) => {
         return new Promise((resolve, reject) => observableDecorator(initialObservable).subscribe({
             next: line => writeOutput(line),
             error: err => {
-                reject(new line_machine_common_1.LineMachineError(context, err));
+                reject(new line_machine_common_1.LineMachineError(context, err, lineStreamCallback));
             },
             complete: () => resolve(context),
         }));

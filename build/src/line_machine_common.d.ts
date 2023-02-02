@@ -20,8 +20,7 @@ export type TLineMachineOptions = {
 export declare const DEFAULT_LINEMACHINE_OPTIONS: TLineMachineOptions;
 export type TLineStreamCallback = (lineStream: ReadlineTransform, writeOutput: (line: string | null) => Promise<void>, fileLineContext: TFileLineContext, options: TLineMachineOptions) => Promise<TFileLineContext>;
 export declare const fileLineProcessorWrapper: (lineStreamCallback: TLineStreamCallback, options?: Partial<TLineMachineOptions>) => TFileProcessor<TFileLineContext>;
-export declare const getLineContextInfo: (context: TFileLineContext) => string;
 export declare class LineMachineError extends Error {
     static getLineContextInfo(context: TFileLineContext): string;
-    constructor(context: TFileLineContext, err: Error);
+    constructor(context: TFileLineContext, err: Error, callerFn?: CallableFunction);
 }
