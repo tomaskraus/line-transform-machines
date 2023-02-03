@@ -52,10 +52,12 @@ const fileLineProcessorWrapper = (lineStreamCallback, options) => {
     return (0, file_stream_wrapper_1.fileStreamWrapper)(streamProc);
 };
 exports.fileLineProcessorWrapper = fileLineProcessorWrapper;
+/**
+ * Provides additional LineMachine info, such as input line number, line content and input file name
+ */
 class LineMachineError extends Error {
     constructor(context, err, callerFn) {
         super(err.message);
-        // properly capture stack trace in Node.js
         Error.captureStackTrace(this, callerFn || this.constructor);
         this.name = this.constructor.name;
         this.lineNumber = context.lineNumber;

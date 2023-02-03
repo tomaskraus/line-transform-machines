@@ -95,14 +95,6 @@ export const fileLineProcessorWrapper = (
  */
 export class LineMachineError extends Error {
   /**
-   * Input line number. From Stream or File.
-   */
-  lineNumber: Number;
-  /**
-   * Is empty if a stream is an input.
-   */
-  inputFileName: string;
-  /**
    * Combination of input file and line number. Is empty if a stream is an input.
    */
   at: string;
@@ -110,6 +102,14 @@ export class LineMachineError extends Error {
    * Input line content.
    */
   lineValue: string;
+  /**
+   * Input line number. From Stream or File.
+   */
+  lineNumber: Number;
+  /**
+   * Is empty if a stream is an input.
+   */
+  inputFileName: string;
 
   constructor(
     context: TFileLineContext,
