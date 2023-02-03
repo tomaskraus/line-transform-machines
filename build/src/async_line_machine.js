@@ -9,7 +9,7 @@ const createAsyncLineMachine = (callback, options) => {
             for await (const line of lineStream) {
                 context.value = line;
                 context.lineNumber++;
-                const lineResult = await callback(line, context.lineNumber);
+                const lineResult = await callback(line, context.lineNumber, (0, line_machine_common_1.getFileLineInfo)(context));
                 await writeOutput(lineResult);
             }
             return Promise.resolve(context);

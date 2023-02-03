@@ -3,6 +3,7 @@ import {Observable, from, tap, map} from 'rxjs';
 import {
   LineMachineError,
   fileLineProcessorWrapper,
+  getFileLineInfo,
 } from './line_machine_common';
 import type {TFileProcessor} from './utils/file_stream_wrapper';
 import type {
@@ -14,6 +15,7 @@ import type {
 export type TLineItem = {
   value: string;
   lineNumber: number;
+  fileLineInfo?: string;
 };
 
 export type TLineMachineDecorator = (
@@ -22,7 +24,11 @@ export type TLineMachineDecorator = (
 
 export const createRxjsLineMachine = (
   observableDecorator: (
-    source: Observable<{value: string; lineNumber: number}>
+    source: Observable<{
+      value: string;
+      lineNumber: number;
+      fileLineInfo?: string;
+    }>
   ) => Observable<string>,
   options?: Partial<TLineMachineOptions>
 ): TFileProcessor<TFileLineContext> => {
@@ -36,7 +42,11 @@ export const createRxjsLineMachine = (
         context.value = s;
         context.lineNumber++;
       }),
-      map(s => ({value: s, lineNumber: context.lineNumber}))
+      map(s => ({
+        value: s,
+        lineNumber: context.lineNumber,
+        fileLineInfo: getFileLineInfo(context),
+      }))
     );
 
     return new Promise((resolve, reject) =>

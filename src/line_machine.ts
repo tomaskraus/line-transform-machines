@@ -1,6 +1,7 @@
 import {
   LineMachineError,
   fileLineProcessorWrapper,
+  getFileLineInfo,
 } from './line_machine_common';
 import type {TFileProcessor} from './utils/file_stream_wrapper';
 import type {
@@ -9,7 +10,11 @@ import type {
   TLineStreamCallback,
 } from './line_machine_common';
 
-export type TLineCallback = (line: string, lineNumber: number) => string | null;
+export type TLineCallback = (
+  line: string,
+  lineNumber: number,
+  fileLineInfo?: string
+) => string | null;
 
 export const createLineMachine = (
   callback: TLineCallback,
@@ -24,7 +29,11 @@ export const createLineMachine = (
       for await (const line of lineStream) {
         context.value = line;
         context.lineNumber++;
-        const lineResult = callback(line, context.lineNumber);
+        const lineResult = callback(
+          line,
+          context.lineNumber,
+          getFileLineInfo(context)
+        );
         await writeOutput(lineResult);
       }
       return Promise.resolve(context);

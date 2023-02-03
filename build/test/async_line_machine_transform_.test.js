@@ -50,7 +50,10 @@ afterEach(() => {
     mock_fs_1.default.restore();
 });
 describe('transform', () => {
-    const lineNumberAsyncFn = (line, lineNumber) => {
+    const lineNumberAsyncFn = (line, lineNumber, fileLineInfo) => {
+        if (fileLineInfo) {
+            return Promise.resolve(`${fileLineInfo}: ${line}`);
+        }
         return Promise.resolve(`${lineNumber}: ${line}`);
     };
     const noDollyAsyncFn = (line) => {
@@ -64,6 +67,12 @@ describe('transform', () => {
         const res = await lnMachine(input, output);
         expect(res.lineNumber).toEqual(2);
         expect(output.toString()).toEqual('1: Hello, \n2: World!');
+    });
+    test('if input from file, contains fileLine info', async () => {
+        const lnMachine = (0, async_line_machine_1.createAsyncLineMachine)(lineNumberAsyncFn);
+        const res = await lnMachine(`${PATH_PREFIX}/my-file.txt`, output);
+        expect(res.lineNumber).toEqual(2);
+        expect(output.toString()).toEqual(`${PATH_PREFIX}/my-file.txt:1: Hello, \n${PATH_PREFIX}/my-file.txt:2: World!`);
     });
     test('outputs less lines if fn returns null', async () => {
         const inputWithDolly = fs.createReadStream(`${PATH_PREFIX}/dolly-text.txt`);

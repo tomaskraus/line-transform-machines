@@ -9,7 +9,11 @@ const createRxjsLineMachine = (observableDecorator, options) => {
         const initialObservable = (0, rxjs_1.from)(lineStream).pipe((0, rxjs_1.tap)((s) => {
             context.value = s;
             context.lineNumber++;
-        }), (0, rxjs_1.map)(s => ({ value: s, lineNumber: context.lineNumber })));
+        }), (0, rxjs_1.map)(s => ({
+            value: s,
+            lineNumber: context.lineNumber,
+            fileLineInfo: (0, line_machine_common_1.getFileLineInfo)(context),
+        })));
         return new Promise((resolve, reject) => observableDecorator(initialObservable).subscribe({
             next: line => writeOutput(line),
             error: err => {

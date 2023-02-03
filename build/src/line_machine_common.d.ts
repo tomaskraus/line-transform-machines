@@ -8,6 +8,7 @@ export type TFileLineContext = TFileStreamContext & {
     value?: string;
     lineNumber: number;
 };
+export declare const getFileLineInfo: (context: TFileLineContext) => string | undefined;
 /**
  * Options
  */

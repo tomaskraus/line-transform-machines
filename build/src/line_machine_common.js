@@ -6,10 +6,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LineMachineError = exports.fileLineProcessorWrapper = exports.DEFAULT_LINEMACHINE_OPTIONS = void 0;
+exports.LineMachineError = exports.fileLineProcessorWrapper = exports.DEFAULT_LINEMACHINE_OPTIONS = exports.getFileLineInfo = void 0;
 const events_1 = require("events");
 const readline_transform_1 = __importDefault(require("readline-transform"));
 const file_stream_wrapper_1 = require("./utils/file_stream_wrapper");
+const getFileLineInfo = (context) => {
+    if (context.inputFileName) {
+        return `${context.inputFileName}:${context.lineNumber}`;
+    }
+    return undefined;
+};
+exports.getFileLineInfo = getFileLineInfo;
 exports.DEFAULT_LINEMACHINE_OPTIONS = {
     rememberEndOfLines: true,
 };

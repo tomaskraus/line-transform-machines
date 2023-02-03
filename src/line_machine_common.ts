@@ -18,6 +18,15 @@ export type TFileLineContext = TFileStreamContext & {
   lineNumber: number;
 };
 
+export const getFileLineInfo = (
+  context: TFileLineContext
+): string | undefined => {
+  if (context.inputFileName) {
+    return `${context.inputFileName}:${context.lineNumber}`;
+  }
+  return undefined;
+};
+
 /**
  * Options
  */
