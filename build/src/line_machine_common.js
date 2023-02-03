@@ -60,12 +60,12 @@ class LineMachineError extends Error {
         super(err.message);
         Error.captureStackTrace(this, callerFn || this.constructor);
         this.name = this.constructor.name;
-        this.lineNumber = context.lineNumber;
-        this.inputFileName = context.inputFileName || '';
         this.at = context.inputFileName
             ? `${context.inputFileName}:${context.lineNumber}`
             : '';
         this.lineValue = context.value || '';
+        this.lineNumber = context.lineNumber;
+        this.inputFileName = context.inputFileName || '';
     }
 }
 exports.LineMachineError = LineMachineError;

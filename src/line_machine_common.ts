@@ -120,11 +120,11 @@ export class LineMachineError extends Error {
     Error.captureStackTrace(this, callerFn || this.constructor);
     this.name = this.constructor.name;
 
-    this.lineNumber = context.lineNumber;
-    this.inputFileName = context.inputFileName || '';
     this.at = context.inputFileName
       ? `${context.inputFileName}:${context.lineNumber}`
       : '';
     this.lineValue = context.value || '';
+    this.lineNumber = context.lineNumber;
+    this.inputFileName = context.inputFileName || '';
   }
 }
