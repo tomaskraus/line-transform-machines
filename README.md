@@ -6,7 +6,13 @@ Processes text input stream/file line by line. Takes care of I/O &amp; Errors. G
 
 - `RxjsLineMachine` processes input lines by subscribing to the customized Observable.
 
-### Example
+## Installation
+
+```bash
+$ npm install line-transform-machines
+```
+
+## Example
 
 From the input file `input.txt`, print lines, in uppercase, with its line number at the beginning of each line. Do it only for non-empty lines.  
 So that:
