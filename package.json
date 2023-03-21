@@ -27,7 +27,7 @@
     "url": "https://github.com/tomaskraus/line-transform-machines.git"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "test": "jest --coverage",
