@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "@types/mock-fs": "^4.13.1",
-    "@types/node": "^18.11.7",
+    "@types/node": "^20.1.4",
     "gts": "^3.1.1",
     "jest": "^28.0.7",
     "memory-streams": "^0.1.3",
